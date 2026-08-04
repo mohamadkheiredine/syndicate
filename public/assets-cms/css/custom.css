@@ -1,0 +1,245 @@
+*{
+	outline: none;
+}
+
+/*
+|--------------------------------------------------------------------------
+| General Shortcuts
+|--------------------------------------------------------------------------
+|
+*/
+
+/*---------- Elements ----------*/
+.adjust-element{
+	font-size: 0 !important;
+}
+.cursor-pointer{
+	cursor: pointer;
+}
+.cursor-grab{
+	cursor: grab;
+}
+.dir-rtl{
+	direction: rtl !important;
+}
+/*---------- End Elements ----------*/
+
+/*---------- Images ----------*/
+img.contain{
+	object-fit: contain !important;
+}
+/*---------- End Images ----------*/
+
+/*---------- Table ----------*/
+table .img-thumbnail{
+	height: 100%;
+	width: 150px;
+	min-width: 150px;
+	max-height: 85px;
+	object-fit: cover;
+}
+/*---------- End Table ----------*/
+
+/*
+|--------------------------------------------------------------------------
+| End General Shortcuts
+|--------------------------------------------------------------------------
+*/
+
+/*
+|--------------------------------------------------------------------------
+| Override cms.css
+|--------------------------------------------------------------------------
+|
+*/
+
+.navbar-vertical .navbar-brand-img, .navbar-vertical .navbar-brand>img {
+    max-width: 125px !important;
+    max-height: 100px !important;
+}
+
+.dropdown-menu .dropdown-item > i{
+	vertical-align: -7%;
+}
+.dropdown-item.active, .dropdown-item:active{
+	color: #fff !important;
+}
+
+.bg-gradient-primary {
+	background: linear-gradient(87deg, #5e72e4 0, #24a3de 100%) !important;
+}
+
+.datepicker table tr td.today{
+	color: #fff !important;
+	background: #24a3de !important;
+}
+
+.custom-control{
+	padding: 0;
+}
+.custom-control-label{
+	position: static;
+}
+.custom-control-input,
+.custom-control-label::before,
+.custom-control-label::after{
+	top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/*
+|--------------------------------------------------------------------------
+| End Override cms.css
+|--------------------------------------------------------------------------
+*/
+
+/*
+|--------------------------------------------------------------------------
+| Override datatables.net
+|--------------------------------------------------------------------------
+|
+*/
+
+.table td, .table th{
+	white-space: nowrap;
+}
+div.dataTables_wrapper div.dataTables_length label,
+div.dataTables_wrapper div.dataTables_info{
+	padding-left: 1.5rem;
+	font-size: 13px;
+}
+div.dataTables_wrapper div.dataTables_filter label,
+div.dataTables_wrapper div.dataTables_paginate ul.pagination{
+	padding-right: 1.5rem;
+	font-size: 13px;
+}
+div.dataTables_wrapper div.dataTables_paginate ul.pagination{
+	padding-bottom: 1.5rem;
+}
+div.dataTables_wrapper .custom-select{
+	box-shadow: none;
+}
+.page-item:first-child .page-link,
+.page-item:last-child .page-link,
+.page-item.disabled .page-link{
+	width: auto;
+	border-radius: 25px !important;
+	padding: 0 15px;
+}
+.page-item.disabled .page-link{
+	background: #eee;
+}
+
+@media (max-width: 767px){
+
+	div.dataTables_wrapper div.dataTables_length label,
+	div.dataTables_wrapper div.dataTables_info{
+		padding-left: 0;
+	}
+	div.dataTables_wrapper div.dataTables_filter label,
+	div.dataTables_wrapper div.dataTables_paginate ul.pagination{
+		padding-right: 0;
+	}
+	div.dataTables_wrapper div.dataTables_paginate ul.pagination{
+		padding-top: 15px;
+	}
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| End Override datatables.net
+|--------------------------------------------------------------------------
+*/
+
+/*
+|--------------------------------------------------------------------------
+| Override Select2
+|--------------------------------------------------------------------------
+|
+*/
+
+.select2-container{
+	font-size: 13px !important;
+	width: 100% !important;
+	border-radius: .375rem;
+	box-shadow: 0 1px 3px rgba(50, 50, 93, .15), 0 1px 0 rgba(0, 0, 0, .02);
+}
+.select2-selection--single .select2-selection__rendered {
+	color: #8898aa !important;
+	padding: 0 .75rem !important;
+	line-height: calc(2.75rem + 2px) !important;
+}
+.select2-selection--single .select2-selection__arrow{
+	top: 0 !important;
+	right: 0 !important;
+	width: 36px !important;
+	height: 100% !important;
+}
+.select2-selection--single,
+.select2-selection--multiple{
+	border: none !important;
+	min-height: calc(2.75rem + 2px) !important;
+	border-radius: .375rem !important;
+}
+.select2-results__option--highlighted[aria-selected]{
+	background: #5e72e4 !important;
+}
+
+/*
+|--------------------------------------------------------------------------
+| End Override Select2
+|--------------------------------------------------------------------------
+*/
+
+/*
+|--------------------------------------------------------------------------
+| Override quill
+|--------------------------------------------------------------------------
+|
+*/
+
+.ql-toolbar{
+	border: none !important;
+	background: #fff;
+	border-radius: .375rem;
+	box-shadow: 0 1px 3px rgba(50, 50, 93, .15), 0 1px 0 rgba(0, 0, 0, .02);
+}
+.ql-toolbar + .ql-container{
+	border: none;
+	margin-top: 7px;
+	background: #fff;
+	border-radius: .375rem;
+	box-shadow: 0 1px 3px rgba(50, 50, 93, .15), 0 1px 0 rgba(0, 0, 0, .02);
+	overflow: hidden;
+}
+.ql-editor{
+	min-height: 150px;
+}
+
+/*
+|--------------------------------------------------------------------------
+| End Override quill
+|--------------------------------------------------------------------------
+*/
+
+/*
+|--------------------------------------------------------------------------
+| Inputs & Buttons Styling
+|--------------------------------------------------------------------------
+|
+*/
+
+/*---------- HTML General Elements ----------*/
+textarea{
+	height: 150px !important;
+	resize: none;
+}
+/*---------- End HTML General Elements ----------*/
+
+/*
+|--------------------------------------------------------------------------
+| End Inputs & Buttons Styling
+|--------------------------------------------------------------------------
+*/

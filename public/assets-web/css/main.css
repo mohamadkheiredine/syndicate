@@ -1,0 +1,740 @@
+:root{
+    /*---------- Colors ----------*/
+    --color-primary: #E11117;
+    --color-secondary: #B50007;
+    --color-tertiary: #F7D04D;
+    --color-quaternary: #F1F2F2;
+    --color-grey: #E6E7E8;
+}
+
+html, body{
+    overflow-x: hidden;
+}
+body{
+    font-family: 'Poppins', sans-serif;
+}
+::selection{
+    color: #000000;
+    background-color: #CCCCCC;
+}
+::-moz-selection{
+    color: #000000;
+    background-color: #CCCCCC;
+}
+*{
+    font-size: 15px;
+    outline: none !important;
+}
+a{
+    font-size: inherit !important;
+    color: inherit !important;
+    text-decoration: none !important;
+    box-shadow: none !important;
+}
+a.a-hover:hover{
+    color: var(--color-primary) !important;
+}
+a.text-decoration{
+    text-decoration: underline !important;
+}
+.h1 *,h1 *,
+.h2 *,h2 *,
+.h3 *,h3 *,
+.h4 *,h4 *,
+.h5 *,h5 *,
+.h6 *,h6 *{
+    font-size: inherit;
+}
+p,
+.h1,h1,
+.h2,h2,
+.h3,h3,
+.h4,h4,
+.h5,h5,
+.h6,h6,
+label {
+    margin: 0;
+    font-weight: unset;
+}
+b{
+    font-size: inherit;
+}
+ul, ol{
+    margin-bottom: 0
+}
+hr{
+    height: 2px !important;
+    background-color: #a9a9a9;
+}
+img,
+iframe{
+    width: 100%;
+    height: 100%;
+}
+button{
+    box-shadow: none !important;
+}
+svg *{
+    transition: all .3s;
+}
+
+/*
+|--------------------------------------------------------------------------
+| General Shortcuts
+|--------------------------------------------------------------------------
+|
+*/
+
+/*---------- Measures ----------*/
+.width-15{
+    width: 15px;
+    height: 15px;
+}
+.h-100vh{
+    height: 100vh;
+}
+/*---------- End Measures ----------*/
+
+/*---------- Elements ----------*/
+.adjust-element{
+    font-size: 0;
+}
+.cursor-pointer{
+    cursor: pointer;
+}
+.z-index-1{
+    z-index: 1;
+}
+/*---------- End Elements ----------*/
+
+/*---------- Fonts Weights ----------*/
+/*.font-weight-regular{
+    font-family: 'ts_rotgerregular' !important;
+}
+.font-weight-light{
+    font-family: 'ts_rotgerlight' !important;
+}
+.font-weight-bold{
+    font-family: 'ts_rotgerbold' !important;
+}
+b,
+strong{
+    font-family: 'ts_rotgerbold';
+}*/
+/*---------- End Fonts Weights ----------*/
+
+/*---------- Text Color ----------*/
+.text-primary{
+    color: var(--color-primary) !important;
+}
+.text-secondary{
+    color: var(--color-secondary) !important;
+}
+.text-tertiary{
+    color: var(--color-tertiary) !important;
+}
+.text-grey{
+    color: var(--color-grey) !important;
+}
+.text-black{
+    color: #000;
+}
+/*---------- End Text Color ----------*/
+
+/*---------- Background Color ----------*/
+.bg-primary{
+    background-color: var(--color-primary) !important;
+}
+.bg-secondary{
+    background-color: var(--color-secondary) !important;
+}
+.bg-tertiary{
+    background-color: var(--color-tertiary) !important;
+}
+.bg-quaternary{
+    background-color: var(--color-quaternary) !important;
+}
+.bg-grey{
+    background-color: var(--color-grey) !important;
+}
+.bg-black{
+    background-color: #000000;
+}
+/*---------- End Background Color ----------*/
+
+/*---------- Picture Ratio ----------*/
+/*.picture-wrapper{
+    position: relative;
+}
+.picture-wrapper.padding-top-100{
+    padding-top: 100%;
+}
+.picture-wrapper img,
+.picture-wrapper iframe{
+    position: absolute;
+    top: 0;
+    left: 0;
+}*/
+/*---------- End Picture Ratio ----------*/
+
+/*---------- Images / Videos ----------*/
+img.cover,
+video.cover{
+    -o-object-fit: cover;
+    object-fit: cover;
+}
+img.contain{
+    -o-object-fit: contain;
+    object-fit: contain;
+}
+img.greyscale{
+    filter: grayscale(1);
+}
+/*---------- End Images / Videos ----------*/
+
+/*---------- Background Image ----------*/
+.background-image{
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.background-image.fixed{
+    background-attachment: fixed;
+}
+/*---------- End Background Image ----------*/
+
+/*---------- Overlay ----------*/
+.overlay:before{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+.overlay.top-left:before{
+    background-image: linear-gradient(-45deg, transparent 55%, rgba(0,0,0,0.85));
+}
+.overlay.full-gradient:before{
+    background-image: linear-gradient(-45deg, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.65) 100%);
+}
+.overlay.full:before{
+    background: rgba(0,0,0,0.5);
+}
+/*---------- End Overlay ----------*/
+
+/*---------- Submit Loader ----------*/
+/*.submit-loading{
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.75);
+    z-index: 9999;
+}
+.submit-loading img{
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    -webkit-animation: rotation 2s infinite;
+    -webkit-animation: rotation 2s infinite;
+}*/
+/*---------- End Submit Loader ----------*/
+
+/*---------- Rich Text ----------*/
+.rich-text{
+    word-break: break-word;
+}
+.rich-text a{
+    text-decoration: underline !important;
+}
+/*.rich-text ul{
+    padding-left: 20px;
+}*/
+/*.rich-text ul li{
+    margin-bottom: 20px;
+}*/
+.rich-text ul li:last-child{
+    margin-bottom: 0;
+}
+/*---------- End Rich Text ----------*/
+
+/*---------- Pagination ----------*/
+.pagination{
+    justify-content: center;
+    margin-top: 50px;
+}
+.pagination .page-link{
+    color: #000000 !important;
+    opacity: 0.5;
+    border: 0;
+    background-color: unset !important;
+}
+.pagination .page-item.active .page-link{
+    opacity: 1;
+}
+/*---------- End Pagination ----------*/
+
+/*
+|--------------------------------------------------------------------------
+| End General Shortcuts
+|--------------------------------------------------------------------------
+*/
+
+/*
+|--------------------------------------------------------------------------
+| Inputs & Buttons Styling
+|--------------------------------------------------------------------------
+|
+*/
+
+/*---------- Button Custom ----------*/
+.btn-custom{
+    /*height: 55px;*/
+    color: #FFFFFF !important;
+    background-color: var(--color-primary);
+    border-radius: 12px;
+    /*font-size: 22px;*/
+    transition: all 0.3s;
+}
+/*---------- End Button Custom ----------*/
+
+/*---------- Input Custom ----------*/
+.form-control:focus{
+    box-shadow: none !important;
+    border-color: inherit;
+}
+
+.form-group img{
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 17.5px;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+.form-custom{
+    height: 55px;
+    padding-left: 26px;
+    border-radius: 12px;
+    border-color: #FFFFFF !important;
+    background-color: #FFFFFF !important;
+}
+.form-custom.invalid-error{
+    border-color: #dc3545 !important;
+}
+
+.select-custom{
+    -moz-appearance: none; /* Firefox */
+    -webkit-appearance: none; /* Safari and Chrome */
+    appearance: none;
+    background: url(../images/icons/arrow-down.svg) no-repeat 94.5%;
+}
+/*---------- End Input Custom ----------*/
+
+/*---------- HTML General Elements ----------*/
+::-webkit-input-placeholder { /* Edge */
+    color: #CCCCCC !important;
+}
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: #CCCCCC !important;
+}
+::placeholder {
+    color: #CCCCCC !important;
+}
+select{
+    color: #000000 !important;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button { /* Chrome, Safari, Edge, Opera */
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] { /* Firefox */
+  -moz-appearance: textfield;
+}
+textarea{
+    padding-top: 12px !important;
+    height: auto !important;
+    padding-top: 8px !important;
+}
+/*---------- End HTML General Elements ----------*/
+
+/*---------- Checkbox Custom ----------*/
+.check-custom {
+    display: none;
+}
+.check-custom + label{
+    position: relative;
+    padding-left: 35px;
+    cursor: pointer;
+}
+.check-custom + label:before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 25px;
+    height: 25px;
+    border: 1px solid #000000;
+    background-color: #FFFFFF;
+    border-radius: 4px;
+}
+.check-custom:checked + label:before{
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+.check-custom:checked + label:after{
+    content: url('../images/icons/tick.svg');
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    left: 0;
+    text-align: center;
+}
+/*---------- End Checkbox Custom ----------*/
+
+/*---------- Radio Custom ----------*/
+.radio-custom {
+    display: none;
+}
+.radio-custom + label{
+    position: relative;
+    padding-left: 35px;
+    cursor: pointer;
+}
+.radio-custom + label:before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    border: 1px solid #000000;
+    background-color: #FFFFFF;
+    border-radius: 100%;
+}
+.radio-custom:checked + label:after{
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 4px;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    background-color: var(--color-primary);
+    border-radius: 100%;
+}
+/*---------- End Radio Custom ----------*/
+
+/*
+|--------------------------------------------------------------------------
+| End Inputs & Buttons Styling
+|--------------------------------------------------------------------------
+*/
+
+/*
+|--------------------------------------------------------------------------
+| Override Bootstrap
+|--------------------------------------------------------------------------
+|
+*/
+
+.container {
+    max-width: 1500px;
+}
+.badge{
+    position: absolute;
+    top: 50%;
+    left: 18px;
+    transform: translateY(-100%);
+    border-radius: 100%;
+}
+.form-control:disabled, .form-control[readonly] {
+    border-color: #e9ecef !important;
+    background-color: #e9ecef !important;
+}
+@media (min-width: 576px){
+    .modal-dialog {
+        max-width: 600px;
+    }
+}
+
+/*
+|--------------------------------------------------------------------------
+| End Override Bootstrap
+|--------------------------------------------------------------------------
+*/
+
+/*
+|--------------------------------------------------------------------------
+| Override Slick
+|--------------------------------------------------------------------------
+|
+*/
+
+.slick-slider{
+    margin-bottom: 0 !important;
+}
+
+/*---------- Dots Custom ----------*/
+.slick-dots{
+    font-size: 0;
+    bottom: -15px;
+}
+.slick-dots li{
+    margin: 0 2.5px;
+}
+.slick-dots li button{
+    padding: 0;
+    background-color: #FFFFFF;
+    border-radius: 100%;
+    opacity: 0.4;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+}
+.slick-dots li,
+.slick-dots li button{
+    width: 5px;
+    height: 5px;
+}
+.slick-dots li button:before{
+    content: none;
+}
+.slick-dots li.slick-active button{
+    opacity: 1;
+    background-color: #FFFFFF;
+}
+/*---------- End Dots Custom ----------*/
+
+/*---------- Vertical Dots Custom ----------*/
+.vertical-dots .slick-dots{
+    position: absolute;
+    top: 50%;
+    left: auto;
+    bottom: auto;
+    right: -60px;
+    width: 5px;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+.vertical-dots .slick-dots li{
+    display: block;
+    margin: 0;
+    margin-bottom: 10px;
+}
+/*---------- End Vertical Dots Custom ----------*/
+
+/*---------- Arrow Custom ----------*/
+.slick-prev,
+.slick-next {
+    top: 50%;
+    width: 15px;
+    height: 15px;
+    z-index: 1;
+}
+.slick-prev {
+    left: 0;
+}
+.slick-next {
+    right: 0;
+}
+.slick-prev:before,
+.slick-next:before{
+    opacity: 1;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+    background-size: 15px 15px;
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    content: "";
+    background-repeat: no-repeat;
+}
+.slick-prev:before{
+    background-image: url(../images/icons/slick/arrow-left.svg);
+
+}
+.slick-next:before{
+    background-image: url('../images/icons/slick/arrow-right.svg')
+}
+.slick-prev.slick-disabled:before,
+.slick-next.slick-disabled:before{
+    opacity: 0.5 !important;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+}
+/*---------- End Arrow Custom ----------*/
+
+/*
+|--------------------------------------------------------------------------
+| End Override Slick
+|--------------------------------------------------------------------------
+*/
+
+/*
+|--------------------------------------------------------------------------
+| Override Select2
+|--------------------------------------------------------------------------
+|
+*/
+
+.select2-container{
+    font-size: 15px !important;
+    width: 175px !important;
+    border-radius: .25rem !important;
+}
+.select2-selection--single .select2-selection__rendered {
+    color: #FFFFFF !important;
+    padding: 0 28px !important;
+    padding: 0 1.75rem !important;
+    line-height: 40px !important;
+    text-align: center;
+}
+.select2-selection--single .select2-selection__arrow{
+    top: 0 !important;
+    right: 0 !important;
+    width: 60px !important;
+    height: 100% !important;
+}
+.select2-selection--single .select2-selection__arrow b{
+    border-width: 6px 5px 0 5px !important;
+    border-color: #FFFFFF transparent transparent transparent !important;
+}
+.select2-selection--single,
+.select2-selection--multiple{
+    border: none !important;
+    min-height: 40px !important;
+    border-radius: .25rem !important;
+    background-color: var(--color-primary) !important;
+}
+.select2-dropdown{
+    border-color: #eee;
+}
+.select2-results__option{
+    text-align: center;
+}
+.select2-results__option--highlighted[aria-selected]{
+    background-color: var(--color-primary) !important;
+}
+
+/*
+|--------------------------------------------------------------------------
+| End Override Select2
+|--------------------------------------------------------------------------
+*/
+
+/*
+|--------------------------------------------------------------------------
+| Google Maps Components
+|--------------------------------------------------------------------------
+|
+*/
+
+/*---------- Map ----------*/
+.map{
+    width: 100%;
+    height: 500px;
+}
+/*---------- End Map ----------*/
+
+/*---------- InfoWindow ----------*/
+.gm-style-iw.gm-style-iw-c{
+    border-radius: 0 !important;
+    padding: 0 !important;
+}
+.gm-style-iw.gm-style-iw-c button{
+    top: 0 !important;
+    right: 0 !important;
+}
+.gm-style-iw-c .gm-style-iw-d{
+    padding: 0 !important;
+    overflow: hidden !important;
+}
+.gm-style .gm-style-iw-t::after{
+    background-color: var(--color-secondary) !important;
+}
+/*---------- End InfoWindow ----------*/
+
+/*
+|--------------------------------------------------------------------------
+| End Google Maps Components
+|--------------------------------------------------------------------------
+*/
+
+/*
+|--------------------------------------------------------------------------
+| Responsiveness Media Queries
+|--------------------------------------------------------------------------
+|
+*/
+
+@media (max-width: 991px) {
+
+    /*
+    |--------------------------------------------------------------------------
+    | Navigation
+    |--------------------------------------------------------------------------
+    |
+    */
+
+    /*---------- Navbar Toggler ----------*/
+    .navbar-toggler{
+        background: var(--color-primary);
+        transition: all .3s;
+    }
+    .navbar-toggler span{
+        position: relative;
+        display: block;
+        background: #fff;
+        width: 25px;
+        height: 2px;
+        margin: 5px 0;
+        transition: all .3s;
+    }
+    .navbar-toggler[aria-expanded="true"] span:nth-child(1){
+        transform: rotate(45deg);
+        top: 6.6px;
+    }
+    .navbar-toggler[aria-expanded="true"] span:nth-child(2){
+        background: transparent !important;
+    }
+    .navbar-toggler[aria-expanded="true"] span:nth-child(3){
+        transform: rotate(-45deg);
+        top: -7.6px;
+    }
+    /*---------- End Navbar Toggler ----------*/
+
+    /*
+    |--------------------------------------------------------------------------
+    | End Navigation
+    |--------------------------------------------------------------------------
+    */
+
+}
+
+@media (max-width: 767px) {
+
+
+
+}
+
+@media (max-width: 575px) {
+
+
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| End Responsiveness Media Queries
+|--------------------------------------------------------------------------
+*/

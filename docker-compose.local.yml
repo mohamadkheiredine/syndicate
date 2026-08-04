@@ -1,0 +1,114 @@
+version: "3"
+services:
+  # PHP Service
+  app:
+    build:
+      context: .
+      dockerfile: DockerFile
+    image: mashroob
+    container_name: mashroob-app
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    volumes:
+      - ./:/var/www
+    networks:
+      - project_network
+
+  # Nginx Service
+  nginx:
+    image: nginx:alpine
+    container_name: mashroob-nginx
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+    volumes:
+      - ./:/var/www
+      - ./docker-compose/nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - project_network
+
+  # # postgresql Service
+  db:
+    image: postgres
+    container_name: mashroob-db
+    restart: always
+    env_file: ./.env
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: $DB_USERNAME
+      POSTGRES_PASSWORD: $DB_PASSWORD
+      POSTGRES_DB: $DB_DATABASE
+      SERVICE_TAGS: dev
+      SERVICE_NAME: postgresql
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      - project_network
+
+  # PostgreSQL Service
+  # db:
+  #   image: postgres:13
+  #   container_name: mashroob-db
+  #   restart: unless-stopped
+  #   tty: true
+  #   ports:
+  #     - 5432:5432
+  #   environment:
+  #     POSTGRES_DB: $DB_DATABASE
+  #     POSTGRES_USER: $DB_USERNAME
+  #     POSTGRES_PASSWORD: $DB_PASSWORD
+  #     SERVICE_TAGS: dev
+  #     SERVICE_NAME: postgres
+  #   volumes:
+  #     - backup:/var/lib/postgresql/data
+  #   networks:
+  #     - project_network
+
+  # MySQL Service
+  # db:
+  #   image: mysql:8.0
+  #   container_name: mashroob-db
+  #   restart: unless-stopped
+  #   tty: true
+  #   ports:
+  #     - 3306:3306
+  #   environment:
+  #     MYSQL_DATABASE: $DB_DATABASE
+  #     MYSQL_ROOT_PASSWORD: $DB_PASSWORD
+  #     SERVICE_TAGS: dev
+  #     SERVICE_NAME: mysql
+  #   volumes:
+  #     # - ./docker-compose/mysql:/docker-entrypoint-initdb.d
+  #     - backup:/var/lib/mysql
+  #   networks:
+  #     - project_network
+
+  # phpmyadmin
+  # myadmin:
+  #   image: "phpmyadmin:latest"
+  #   container_name: mashroob-phpmyadmin
+  #   restart: unless-stopped
+  #   portso undefined method App\Models\User::GeneralScope():
+  #     - 8080:80
+  #   environment:
+  #     PMA_HOST: db
+  #     MYSQL_ROOT_PASSWORD: $DB_PASSWORD
+  #   depends_on:
+  #     - db
+  #   networks:
+  #     - project_network
+
+  # Docker Networks
+networks:
+  project_network:
+    driver: bridge
+
+# Volumes
+volumes:
+  backup:
+  db:

@@ -1,0 +1,49 @@
+# Important
+# All data files should be uploaded to S3 Bucket
+# The project should be connected to an RDS (Relational Database Service by Amazon AWS)
+version: "3"
+services:
+  # PHP Service
+  app:
+    build:
+      context: .
+      dockerfile: DockerFile
+    image: mashroob
+    container_name: mashroob-app
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    volumes:
+      - ./:/var/www
+    networks:
+      - project_network
+
+  # Nginx Service
+  mashroobnginx:
+    image: nginx:latest
+    container_name: mashroob-nginx
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.mashroobnginx.entrypoints=websecure"
+      - "traefik.http.routers.mashroobnginx.rule=Host(`mashroob.op1.tedmob.com`)"
+      - "traefik.http.routers.mashroobnginx.service=mashroobnginx"
+      - "traefik.http.services.mashroobnginx.loadbalancer.server.port=80"
+    volumes:
+      - ./:/var/www
+      - ./docker-compose/nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - project_network
+      - proxy
+    depends_on:
+      - app
+
+# Docker Networks
+networks:
+  project_network:
+    driver: bridge
+  proxy:
+    external: true
