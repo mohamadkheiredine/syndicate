@@ -11,6 +11,7 @@ use App\Http\Controllers\Cms\Base\PermissionController;
 use App\Http\Controllers\Cms\Base\SimulationController;
 use App\Http\Controllers\Cms\UserController;
 use App\Http\Controllers\Cms\SyndicateUserController;
+use App\Http\Controllers\Cms\MemberPaymentController;
 use App\Http\Controllers\Cms\SupportCategoryController;
 use App\Http\Controllers\Cms\SupportController;
 use App\Http\Controllers\Cms\FaqController;
@@ -109,6 +110,13 @@ Route::middleware(['auth:admin', 'set_admin_as_default_guard', 'admin_content'])
         Route::get('syndicate-users/export/excel', [SyndicateUserController::class, 'exportExcel'])->name('syndicate-users.export.excel');
         Route::get('syndicate-users/export/pdf', [SyndicateUserController::class, 'exportPdf'])->name('syndicate-users.export.pdf');
         Route::resource('syndicate-users', SyndicateUserController::class)->except(['show']);
+
+        // MEMBERS PAYMENT
+        Route::get('members-payment/outstanding-years/{user_id}', [MemberPaymentController::class, 'outstandingYears'])->name('members-payment.outstanding-years');
+        Route::get('members-payment/export/csv', [MemberPaymentController::class, 'exportCsv'])->name('members-payment.export.csv');
+        Route::get('members-payment/export/excel', [MemberPaymentController::class, 'exportExcel'])->name('members-payment.export.excel');
+        Route::get('members-payment/export/pdf', [MemberPaymentController::class, 'exportPdf'])->name('members-payment.export.pdf');
+        Route::resource('members-payment', MemberPaymentController::class)->only(['index', 'create', 'store', 'destroy']);
 
         // SUPPORT CATEGORIES
         Route::resource('support-categories', SupportCategoryController::class);

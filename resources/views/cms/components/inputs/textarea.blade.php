@@ -10,7 +10,7 @@
 
 <div class="form-group">
     <label class="form-control-label">{{ $label }} @include('cms.components.inputs.asterix')</label>
-    <textarea name="{{ $name }}" @if(isset($maxlength) && $maxlength) maxlength="{{ $maxlength }}" @endif class="form-control form-control-alternative {{ (isset($quill) && $quill ? 'quill' : '') }} {{ (isset($tinymce) && $tinymce ? 'tinymce' : '') }}">{{ $component_value }}</textarea>
+    <textarea name="{{ $name }}" @if(isset($maxlength) && $maxlength) maxlength="{{ $maxlength }}" @endif @if(isset($asterix) && $asterix) required @endif class="form-control form-control-alternative {{ (isset($quill) && $quill ? 'quill' : '') }} {{ (isset($tinymce) && $tinymce ? 'tinymce' : '') }}">{{ $component_value }}</textarea>
 
     @if(isset($text))
         <small><em>{{ $text }}</em></small>

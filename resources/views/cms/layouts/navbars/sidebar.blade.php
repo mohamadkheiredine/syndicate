@@ -127,6 +127,13 @@
                     </a>
                 </li>
                 @endcan
+                @can('members_payment-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.members-payment.*') ? 'active' : '' }}" href="{{ route('admin.members-payment.index') }}">
+                        <i class="fas fa-hand-holding-usd"></i>Members Payment
+                    </a>
+                </li>
+                @endcan
             </ul>
 
             <h6 class="navbar-heading text-muted">CONTENT MANAGEMENT</h6>

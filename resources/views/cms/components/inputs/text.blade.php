@@ -21,7 +21,7 @@ if(isset($value) && $value){
 	</div>
 	@if(isset($type) && $type == 'password')
 	<div class="input-group input-group-alternative">
-		<input type="password" id="input-{{ $name }}" name="{{ $name }}" @if(isset($maxlength) && $maxlength) maxlength="{{ $maxlength }}" @endif class="form-control {{ (isset($class) && $class ? $class : '') }}" value="{{ $component_value }}" @if(isset($readonly) && $readonly) readonly @endif>
+		<input type="password" id="input-{{ $name }}" name="{{ $name }}" @if(isset($maxlength) && $maxlength) maxlength="{{ $maxlength }}" @endif @if(isset($asterix) && $asterix) required @endif class="form-control {{ (isset($class) && $class ? $class : '') }}" value="{{ $component_value }}" @if(isset($readonly) && $readonly) readonly @endif>
 		<div class="input-group-append">
 			<span class="input-group-text" style="cursor: pointer" onclick="
 				let input = document.getElementById('input-{{ $name }}');
@@ -32,7 +32,7 @@ if(isset($value) && $value){
 		</div>
 	</div>
 	@else
-	<input name="{{ $name }}" @if(isset($maxlength) && $maxlength) maxlength="{{ $maxlength }}" @endif class="form-control form-control-alternative {{ (isset($class) && $class ? $class : '') }}" value="{{ $component_value }}" @if(isset($class) && $class == 'slugify_slug' || isset($readonly) && $readonly) readonly @endif>
+	<input name="{{ $name }}" @if(isset($maxlength) && $maxlength) maxlength="{{ $maxlength }}" @endif @if(isset($asterix) && $asterix) required @endif class="form-control form-control-alternative {{ (isset($class) && $class ? $class : '') }}" value="{{ $component_value }}" @if(isset($class) && $class == 'slugify_slug' || isset($readonly) && $readonly) readonly @endif>
 	@endif
 
 	@if(isset($class) && $class == 'slugify_slug')

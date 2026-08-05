@@ -26,7 +26,7 @@
                 @include('cms.components.inputs.text', ['label' => 'First Name', 'asterix' => true, 'name' => 'first_name', 'maxlength' => 255])
 
                 {{-- Father's Name --}}
-                @include('cms.components.inputs.text', ['label' => "Father's Name", 'name' => 'fathers_name', 'maxlength' => 255])
+                @include('cms.components.inputs.text', ['label' => "Father's Name", 'asterix' => true, 'name' => 'fathers_name', 'maxlength' => 255])
 
                 {{-- Last Name --}}
                 @include('cms.components.inputs.text', ['label' => 'Last Name', 'asterix' => true, 'name' => 'last_name', 'maxlength' => 255])
@@ -38,7 +38,7 @@
                 @include('cms.components.inputs.text', ['label' => 'Email', 'type' => 'email', 'asterix' => true, 'name' => 'email', 'maxlength' => 255])
 
                 {{-- Mobile Number --}}
-                @include('cms.components.inputs.text', ['label' => 'Mobile Number', 'name' => 'mobile_number', 'maxlength' => 255])
+                @include('cms.components.inputs.text', ['label' => 'Mobile Number', 'asterix' => true, 'name' => 'mobile_number', 'maxlength' => 255])
 
                 {{-- Blood Type --}}
                 @include('cms.components.inputs.text', ['label' => 'Blood Type', 'asterix' => true, 'name' => 'blood_type', 'maxlength' => 10])
@@ -47,7 +47,7 @@
                 @include('cms.components.inputs.checkbox', ['label' => 'Has ID Card', 'name' => 'has_id', 'value' => true])
 
                 {{-- Company --}}
-                @include('cms.components.inputs.text', ['label' => 'Company Name', 'name' => 'company', 'maxlength' => 255])
+                @include('cms.components.inputs.text', ['label' => 'Company Name', 'asterix' => true, 'name' => 'company', 'maxlength' => 255])
 
                 {{-- Department --}}
                 @include('cms.components.inputs.text', ['label' => 'Department', 'name' => 'department', 'maxlength' => 255])

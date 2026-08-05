@@ -1,6 +1,6 @@
 <div class="form-group">
 	<label class="form-control-label">{{ $label }} @include('cms.components.inputs.asterix')</label>
-	<select class="select2-custom form-control" name="{{ $name }}">
+	<select class="select2-custom form-control" name="{{ $name }}" @if(isset($asterix) && $asterix) required @endif>
 		<option {{ (isset($row->$name) && $row->$name) ? '' : 'selected' }} disabled>{{ $placeholder }}</option>
 		@if(!isset($asterix))
 		<option value="0">None</option>

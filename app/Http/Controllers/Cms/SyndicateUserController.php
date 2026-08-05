@@ -197,11 +197,14 @@ class SyndicateUserController extends Controller
 
         $this->validate($request, [
             'first_name' => 'required|string|max:255',
+            'fathers_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:' . $page_info['table_name'] . ',email',
+            'mobile_number' => 'required|string|max:255',
             'password' => 'required|min:6',
             'confirm_password' => 'required|same:password',
             'blood_type' => 'required|string|max:10',
+            'company' => 'required|string|max:255',
             'registration_fees' => 'nullable|numeric',
             'photo' => 'nullable|mimes:png,jpg,jpeg|max:2048',
         ]);
@@ -263,9 +266,12 @@ class SyndicateUserController extends Controller
 
         $this->validate($request, [
             'first_name' => 'required|string|max:255',
+            'fathers_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:' . $page_info['table_name'] . ',email,' . $row->id,
+            'mobile_number' => 'required|string|max:255',
             'blood_type' => 'required|string|max:10',
+            'company' => 'required|string|max:255',
             'registration_fees' => 'nullable|numeric',
             'photo' => 'nullable|mimes:png,jpg,jpeg|max:2048',
         ]);
