@@ -98,28 +98,14 @@
                             @endcan
                         </ul>
                     </div>
-                </li>
-                @can('simulation-create')
-                <li class="nav-item">
-                    <a class="nav-link {{ Route::is('admin.simulation.*') ? 'active' : '' }}" href="{{ route('admin.simulation.index') }}">
-                        <i class="fas fa-user-secret text-primary"></i>Simulation
-                    </a>
-                </li>
-                @endcan
+                </li> 
             </ul>
 
             <hr class="my-3">
             @endcanany
 
-            <h6 class="navbar-heading text-muted">USERS MANAGEMENT</h6>
+            <h6 class="navbar-heading text-muted">MANAGEMENT</h6>
             <ul class="navbar-nav mb-3">
-                @can('users-view')
-                <li class="nav-item">
-                    <a class="nav-link {{ Route::is('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
-                        <i class="fas fa-users"></i>Users Management
-                    </a>
-                </li>
-                @endcan
                 @can('syndicate_users-view')
                 <li class="nav-item">
                     <a class="nav-link {{ Route::is('admin.syndicate-users.*') ? 'active' : '' }}" href="{{ route('admin.syndicate-users.index') }}">
@@ -134,64 +120,56 @@
                     </a>
                 </li>
                 @endcan
-            </ul>
-
-            <h6 class="navbar-heading text-muted">CONTENT MANAGEMENT</h6>
-            <ul class="navbar-nav mb-3">
-                @can('faqs-view')
+                @can('reports-view')
                 <li class="nav-item">
-                    <a class="nav-link {{ Route::is('admin.faqs.*') ? 'active' : '' }}" href="{{ route('admin.faqs.index') }}">
-                        <i class="fas fa-question-circle"></i>Faqs
+                    <a class="nav-link {{ Route::is('admin.reports.*') ? 'active' : '' }}" href="{{ route('admin.reports.index') }}">
+                        <i class="fas fa-chart-line"></i>Reporting
+                    </a>
+                </li>
+                @endcan
+                @can('documents-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.documents.*') ? 'active' : '' }}" href="{{ route('admin.documents.index') }}">
+                        <i class="fas fa-file"></i>Documents
+                    </a>
+                </li>
+                @endcan
+                @can('income-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.income.*') ? 'active' : '' }}" href="{{ route('admin.income.index') }}">
+                        <i class="fas fa-sort-amount-up"></i>Income
+                    </a>
+                </li>
+                @endcan
+                @can('expenses-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.expenses.*') ? 'active' : '' }}" href="{{ route('admin.expenses.index') }}">
+                        <i class="fas fa-sort-amount-down"></i>Expenses
+                    </a>
+                </li>
+                @endcan
+                @can('yearly_payment-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.yearly-payment.*') ? 'active' : '' }}" href="{{ route('admin.yearly-payment.index') }}">
+                        <i class="fas fa-calendar-alt"></i>Yearly Payment
+                    </a>
+                </li>
+                @endcan
+                @can('election_fees-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.election-fees.*') ? 'active' : '' }}" href="{{ route('admin.election-fees.index') }}">
+                        <i class="fas fa-dollar-sign"></i>Election Fees
+                    </a>
+                </li>
+                @endcan
+                @can('push_notifications-create')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.push-notifications.*') ? 'active' : '' }}" href="{{ route('admin.push-notifications.index') }}">
+                        <i class="fas fa-bell"></i>Push Notifications
                     </a>
                 </li>
                 @endcan
             </ul>
-
-            <h6 class="navbar-heading text-muted">FORMS & SUBMISSIONS</h6>
-            <ul class="navbar-nav mb-3">
-                @can('support_categories-view')
-                <li class="nav-item">
-                    <a class="nav-link {{ Route::is('admin.support-categories.*') ? 'active' : '' }}" href="{{ route('admin.support-categories.index') }}">
-                        <i class="fas fa-life-ring"></i>Support Categories
-                    </a>
-                </li>
-                @endcan
-                @can('support-view')
-                <li class="nav-item">
-                    <a class="nav-link {{ Route::is('admin.support.*') ? 'active' : '' }}" href="{{ route('admin.support.index') }}">
-                        <i class="fas fa-envelope"></i>Contact Forms
-                    </a>
-                </li>
-                @endcan
-            </ul>
-
-            @canany(['fixed_sections-view', 'social_media-view', 'terms_and_conditions-edit', 'privacy_policy-edit'])
-            <h6 class="navbar-heading text-muted">GENERAL MANAGEMENT</h6>
-            <ul class="navbar-nav mb-3">
-                @can('fixed_sections-view')
-                <li class="nav-item">
-                    <a class="nav-link {{ Route::is('admin.fixed-sections.*') ? 'active' : '' }}" href="{{ route('admin.fixed-sections.index') }}">
-                        <i class="fas fa-align-center"></i>Fixed Sections
-                    </a>
-                </li>
-                @endcan
-                @can('countries-view')
-                <li class="nav-item">
-                    <a class="nav-link {{ Route::is('admin.countries.*') ? 'active' : '' }}" href="{{ route('admin.countries.index') }}">
-                        <i class="fas fa-globe"></i>Countries
-                    </a>
-                </li>
-                @endcan
-                @can('social_media-view')
-                <li class="nav-item">
-                    <a class="nav-link {{ Route::is('admin.social-media.*') ? 'active' : '' }}" href="{{ route('admin.social-media.index') }}">
-                        <i class="fab fa-facebook"></i>Social Media
-                    </a>
-                </li>
-                @endcan
-            </ul>
-            @endcanany
-
         </div>
     </div>
 </nav>

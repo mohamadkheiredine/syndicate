@@ -14,20 +14,15 @@ class UserPush extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id',
-        'player_id',
-        'device_model',
-        'device_type',
-        'identifier',
-        'response',
-        'language'
+        'users_id',
+        'registration_id',
     ];
 
     /*
     * RELATIONS
     */
 
-    public function Users(){
-        return $this->belongsTo('App\Models\User', 'user_id');
+    public function syndicateUser(){
+        return $this->belongsTo(SyndicateUser::class, 'users_id');
     }
 }

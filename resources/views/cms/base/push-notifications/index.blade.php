@@ -51,7 +51,7 @@
                                 @csrf
 
                                 {{-- Users Push --}}
-                                @include('cms.components.inputs.select-multiple', ['label' => 'Users', 'asterix' => true, 'name' => 'users', 'rows' => $users_push, 'value_attribute' => 'id', 'attribute' => 'title'])
+                                @include('cms.components.inputs.select-multiple', ['label' => 'Users', 'asterix' => true, 'name' => 'users', 'rows' => $targeted_syndicate_users, 'value_attribute' => 'id', 'attribute' => 'title'])
 
                                 {{-- Image --}}
                                 @include('cms.components.inputs.image', ['label' => 'Image', 'name' => 'single_image'])

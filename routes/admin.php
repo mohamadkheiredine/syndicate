@@ -26,6 +26,12 @@ use App\Http\Controllers\Cms\Base\SmsNotificationController;
 use App\Http\Controllers\Cms\Base\WhatsappNotificationController;
 use App\Http\Controllers\Cms\Base\MaintenanceController;
 use App\Http\Controllers\Cms\Base\SettingController;
+use App\Http\Controllers\Cms\Base\ReportsController;
+use App\Http\Controllers\Cms\DocumentController;
+use App\Http\Controllers\Cms\IncomeController;
+use App\Http\Controllers\Cms\ExpenseController;
+use App\Http\Controllers\Cms\YearlyPaymentController;
+use App\Http\Controllers\Cms\ElectionFeeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -117,6 +123,36 @@ Route::middleware(['auth:admin', 'set_admin_as_default_guard', 'admin_content'])
         Route::get('members-payment/export/excel', [MemberPaymentController::class, 'exportExcel'])->name('members-payment.export.excel');
         Route::get('members-payment/export/pdf', [MemberPaymentController::class, 'exportPdf'])->name('members-payment.export.pdf');
         Route::resource('members-payment', MemberPaymentController::class)->only(['index', 'create', 'store', 'destroy']);
+
+        // REPORTING
+        Route::get('reports', [ReportsController::class, 'index'])->name('reports.index');
+
+        // DOCUMENTS
+        Route::resource('documents', DocumentController::class)->except(['show']);
+
+        // INCOME
+        Route::get('income/export/csv', [IncomeController::class, 'exportCsv'])->name('income.export.csv');
+        Route::get('income/export/excel', [IncomeController::class, 'exportExcel'])->name('income.export.excel');
+        Route::get('income/export/pdf', [IncomeController::class, 'exportPdf'])->name('income.export.pdf');
+        Route::resource('income', IncomeController::class)->except(['show']);
+
+        // EXPENSES
+        Route::get('expenses/export/csv', [ExpenseController::class, 'exportCsv'])->name('expenses.export.csv');
+        Route::get('expenses/export/excel', [ExpenseController::class, 'exportExcel'])->name('expenses.export.excel');
+        Route::get('expenses/export/pdf', [ExpenseController::class, 'exportPdf'])->name('expenses.export.pdf');
+        Route::resource('expenses', ExpenseController::class)->except(['show']);
+
+        // YEARLY PAYMENT
+        Route::get('yearly-payment/export/csv', [YearlyPaymentController::class, 'exportCsv'])->name('yearly-payment.export.csv');
+        Route::get('yearly-payment/export/excel', [YearlyPaymentController::class, 'exportExcel'])->name('yearly-payment.export.excel');
+        Route::get('yearly-payment/export/pdf', [YearlyPaymentController::class, 'exportPdf'])->name('yearly-payment.export.pdf');
+        Route::resource('yearly-payment', YearlyPaymentController::class)->except(['show']);
+
+        // ELECTION FEES
+        Route::get('election-fees/export/csv', [ElectionFeeController::class, 'exportCsv'])->name('election-fees.export.csv');
+        Route::get('election-fees/export/excel', [ElectionFeeController::class, 'exportExcel'])->name('election-fees.export.excel');
+        Route::get('election-fees/export/pdf', [ElectionFeeController::class, 'exportPdf'])->name('election-fees.export.pdf');
+        Route::resource('election-fees', ElectionFeeController::class)->except(['show']);
 
         // SUPPORT CATEGORIES
         Route::resource('support-categories', SupportCategoryController::class);

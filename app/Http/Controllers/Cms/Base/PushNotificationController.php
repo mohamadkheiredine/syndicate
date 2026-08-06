@@ -11,7 +11,6 @@ use Illuminate\Support\Str;
 use App\Helpers\OneSignalHelper;
 use App\Models\UserPush;
 use App\Models\PushInbox;
-use Illuminate\Support\Facades\Storage;
 
 class PushNotificationController extends Controller
 {
@@ -66,15 +65,15 @@ class PushNotificationController extends Controller
             ]
         ];
 
-        // For Targeted Push
-        $users_push = [];
-        $users_push_db = UserPush::has('user')->get();
-        foreach ($users_push_db as $key => $userPush) {
-            $users_push[$key]['id'] = $userPush->user_id;
-            $users_push[$key]['title'] = $userPush->user->first_name . ' ' . $userPush->user->last_name . ' - ' . $userPush->user->email;
+        // For Targeted Push — syndicate users who have at least one registered device
+        $targeted_syndicate_users = [];
+        $registered_devices = UserPush::with('syndicateUser')->has('syndicateUser')->get()->unique('users_id');
+        foreach ($registered_devices as $key => $device) {
+            $targeted_syndicate_users[$key]['id'] = $device->users_id;
+            $targeted_syndicate_users[$key]['title'] = $device->syndicateUser->first_name . ' ' . $device->syndicateUser->last_name . ' - ' . $device->syndicateUser->email;
         }
 
-        return view('cms.base.' . $page_info['link'] . '.index', compact('page_info', 'segments', 'users_push'));
+        return view('cms.base.' . $page_info['link'] . '.index', compact('page_info', 'segments', 'targeted_syndicate_users'));
     }
 
     public function bulk_push(Request $request)
@@ -104,11 +103,7 @@ class PushNotificationController extends Controller
                 ]);
 
                 $notification_image_path = FilesHelper::storeFile($page_info['link'], $request->bulk_image);
-                if (config('services.s3bucket.status') && $notification_image_path) {
-                    $image_path = Storage::disk('s3')->url("ajialouna/" . $page_info['link'] . "/$notification_image_path");
-                } else {
-                    $image_path = asset($notification_image_path);
-                }
+                $image_path = FilesHelper::getImageFullUrl($page_info['link'] . '/' . $notification_image_path);
 
                 /*
                 * This image will be displayed in the notification
@@ -208,11 +203,7 @@ class PushNotificationController extends Controller
                 ]);
 
                 $notification_image_path = FilesHelper::storeFile($page_info['link'], $request->single_image);
-                if (config('services.s3bucket.status') && $notification_image_path) {
-                    $image_path = Storage::disk('s3')->url("ajialouna/" . $page_info['link'] . "/$notification_image_path");
-                } else {
-                    $image_path = asset($notification_image_path);
-                }
+                $image_path = FilesHelper::getImageFullUrl($page_info['link'] . '/' . $notification_image_path);
 
                 /**
                  * this image will be displayed in the notification
@@ -239,14 +230,14 @@ class PushNotificationController extends Controller
         $info['ios_badgeCount'] = '1';
 
         /**
-         * Get Selected Player IDs
+         * Get the registered devices for the selected syndicate users
          */
 
-        $users = UserPush::select('user_id', 'player_id')->whereIn('user_id', $request->users)->get();
+        $selected_devices = UserPush::select('users_id', 'registration_id')->whereIn('users_id', $request->users)->get();
 
-        if (count($users) > 0) {
-            foreach ($users as $user) {
-                $player_ids[] = $user->player_id;
+        if (count($selected_devices) > 0) {
+            foreach ($selected_devices as $device) {
+                $player_ids[] = $device->registration_id;
             }
         }
 
@@ -276,7 +267,7 @@ class PushNotificationController extends Controller
             $message = $result['message'];
             $debugger = $result['debugger'];
             if ($status == 'OK') {
-                foreach ($users as $user) {
+                foreach ($selected_devices as $device) {
                     $pushInbox = PushInbox::create([
                         'subject' => trim(request()->single_subject),
                         'message' => trim(request()->single_message),
@@ -285,7 +276,7 @@ class PushNotificationController extends Controller
                     ]);
 
                     UserPushInbox::create([
-                        'user_id' => $user->id,
+                        'user_id' => $device->users_id,
                         'push_inbox_id' => $pushInbox->id
                     ]);
                 }
@@ -303,7 +294,7 @@ class PushNotificationController extends Controller
         if ($return_success) {
             return redirect()->back()->withSuccess($return_success);
         } elseif ($return_error) {
-            return redirect()->back()->withSuccess($return_error);
+            return redirect()->back()->withError($return_error);
         }
     }
 

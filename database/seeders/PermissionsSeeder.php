@@ -84,6 +84,43 @@ class PermissionsSeeder extends Seeder
             array('name' => 'members_payment-delete', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
             array('name' => 'members_payment-export', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
 
+            // Reporting
+            array('name' => 'reports-view', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+
+            // Documents
+            array('name' => 'documents-view', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'documents-create', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'documents-edit', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'documents-delete', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+
+            // Income
+            array('name' => 'income-view', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'income-create', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'income-edit', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'income-delete', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'income-export', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+
+            // Expenses
+            array('name' => 'expenses-view', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'expenses-create', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'expenses-edit', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'expenses-delete', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'expenses-export', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+
+            // Yearly Payment
+            array('name' => 'yearly_payment-view', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'yearly_payment-create', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'yearly_payment-edit', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'yearly_payment-delete', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'yearly_payment-export', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+
+            // Election Fees
+            array('name' => 'election_fees-view', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'election_fees-create', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'election_fees-edit', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'election_fees-delete', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'election_fees-export', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+
             // Countries
             array('name' => 'countries-view', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
             array('name' => 'countries-create', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),

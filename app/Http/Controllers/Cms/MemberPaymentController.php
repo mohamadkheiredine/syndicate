@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Cms;
 
+use App\Helpers\SubscriptionsHelper;
 use App\Http\Controllers\Controller;
 use App\Models\MemberPayment;
 use App\Models\SyndicatePayment;
@@ -34,34 +35,6 @@ class MemberPaymentController extends Controller
             'table_name' => 'user_expences'
         ];
         return $page_info;
-    }
-
-    /**
-     * Every year the syndicate user is expected to have paid for (their join year through
-     * the current year), still owed (fully or partially) — used by both the outstanding-years
-     * lookup on the Add Payment form and the Total Due Amount calculation. Mirrors the old
-     * CMS's rule that a user isn't required to pay for the year they joined in.
-     *
-     */
-    private function outstandingYearsFor(SyndicateUser $user)
-    {
-        $creationYear = (int) $user->created_at->format('Y');
-        $currentYear = (int) date('Y');
-
-        $paidYears = MemberPayment::where('user_id', $user->id)->pluck('ue_year')->toArray();
-
-        $rates = SyndicatePayment::whereBetween('payment_year', [$creationYear, $currentYear])
-            ->pluck('payment_amount', 'payment_year');
-
-        $outstanding = [];
-        for ($year = $creationYear; $year <= $currentYear; $year++) {
-            if ($year == $creationYear || in_array($year, $paidYears)) {
-                continue;
-            }
-            $outstanding[$year] = $rates[$year] ?? 0;
-        }
-
-        return $outstanding;
     }
 
     /**
@@ -170,7 +143,7 @@ class MemberPaymentController extends Controller
     {
         $user = SyndicateUser::findOrFail($user_id);
 
-        return response()->json($this->outstandingYearsFor($user));
+        return response()->json(SubscriptionsHelper::outstandingYearsFor($user));
     }
 
     /**
@@ -189,10 +162,11 @@ class MemberPaymentController extends Controller
 
         $user = SyndicateUser::findOrFail($request->user_id);
 
-        $outstandingYears = array_keys($this->outstandingYearsFor($user));
+        $outstandingYears = array_keys(SubscriptionsHelper::outstandingYearsFor($user));
+        $joinYear = (int) $user->created_at->format('Y');
         $max = max($request->years);
         foreach ($outstandingYears as $year) {
-            if (!in_array($year, $request->years) && $year < $max) {
+            if (!in_array($year, $request->years) && $year < $max && $year != $joinYear) {
                 return redirect()->back()->withInput()->with('error', 'You need to pay the past years first.');
             }
         }

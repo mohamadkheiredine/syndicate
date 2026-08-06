@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\FilesHelper;
 use Illuminate\Database\Eloquent\Model;
 
 class PushInbox extends Model
@@ -26,7 +27,7 @@ class PushInbox extends Model
     ];
 
 	public function getImageAttribute($value){
-		return $value ? asset($value) : null;
+		return $value ? FilesHelper::getImageFullUrl('push-notifications/' . $value) : null;
 	}
 
 	/*
