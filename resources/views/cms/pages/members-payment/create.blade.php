@@ -75,9 +75,7 @@
             $years.select2();
         }
 
-        $('#user_id').on('change', function () {
-            var userId = this.value;
-
+        function loadOutstandingYears(userId, preselectYears) {
             $message.text('');
             $submit.prop('disabled', false);
             rebuildYears($('<option>').text('Loading...').attr('value', ''), true);
@@ -100,12 +98,30 @@
 
                     var options = [];
                     $.each(response, function (year, amount) {
-                        options.push($('<option>').text(year + ' — ' + amount + '$').attr('value', year));
+                        var $option = $('<option>').text(year + ' — ' + amount + '$').attr('value', year);
+                        if (preselectYears && preselectYears.indexOf(String(year)) !== -1) {
+                            $option.prop('selected', true);
+                        }
+                        options.push($option);
                     });
                     rebuildYears(options, false);
                 }
             });
+        }
+
+        $('#user_id').on('change', function () {
+            loadOutstandingYears(this.value, null);
         });
+
+        // After a failed submission (e.g. duplicate receipt), the user stays selected via
+        // old('user_id') but the browser never fires 'change' just because an option was
+        // pre-selected in HTML — so re-run the lookup ourselves, and restore whichever
+        // years were previously picked.
+        var initialUserId = $('#user_id').val();
+        if (initialUserId) {
+            var previouslySelectedYears = @json(array_map('strval', old('years', [])));
+            loadOutstandingYears(initialUserId, previouslySelectedYears);
+        }
     });
 </script>
 @endpush
