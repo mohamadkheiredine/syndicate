@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>{{ env('APP_NAME') }} | {{ $page_title }}</title>
+	<title>{{ config('app.name') }} | {{ $page_title ?? '' }}</title>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -45,7 +45,7 @@
 	{{-- Main CSS --}}
 	<link rel="stylesheet" type="text/css" href="{{ asset('assets-web/css/main.css') }}?v={{ env('CSS_MAIN') }}"/>
 </head>
-<body>
+<body oncontextmenu="return false">
 	{{-- Navbar --}}
 	@include('web.layouts.header.navbar')
 

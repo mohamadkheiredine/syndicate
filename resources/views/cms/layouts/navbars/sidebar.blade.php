@@ -59,12 +59,19 @@
                 </div>
             </div>
             {{-- Navigation --}}
-            @canany(['dashboard-view', 'admins-view', 'roles-view'])
+            @canany(['dashboard-view', 'logo-edit', 'admins-view', 'roles-view'])
             <ul class="navbar-nav">
                 @can('dashboard-view')
                 <li class="nav-item">
                     <a class="nav-link {{ Route::is('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
                         <i class="fas fa-drafting-compass text-primary"></i>Dashboard
+                    </a>
+                </li>
+                @endcan
+                @can('logo-edit')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.logo.*') ? 'active' : '' }}" href="{{ route('admin.logo.edit') }}">
+                        <i class="fas fa-image text-primary"></i>Logo
                     </a>
                 </li>
                 @endcan
@@ -106,6 +113,48 @@
 
             <h6 class="navbar-heading text-muted">MANAGEMENT</h6>
             <ul class="navbar-nav mb-3">
+                @can('banners-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.banners.*') ? 'active' : '' }}" href="{{ route('admin.banners.index') }}">
+                        <i class="fas fa-images"></i>Banner Manager
+                    </a>
+                </li>
+                @endcan
+                @can('news-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.news.*') ? 'active' : '' }}" href="{{ route('admin.news.index') }}">
+                        <i class="fas fa-newspaper"></i>Media up to date Manager
+                    </a>
+                </li>
+                @endcan
+                @can('syndicate_activities-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.syndicate-activities.*') ? 'active' : '' }}" href="{{ route('admin.syndicate-activities.index') }}">
+                        <i class="fas fa-calendar-check"></i>Syndicate Activities Manager
+                    </a>
+                </li>
+                @endcan
+                @can('syndicate_offers-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.syndicate-offers.*') ? 'active' : '' }}" href="{{ route('admin.syndicate-offers.index') }}">
+                        <i class="fas fa-tags"></i>Offers Specials Manager
+                    </a>
+                </li>
+                @endcan
+                @can('syndicate_family-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.syndicate-family.*') ? 'active' : '' }}" href="{{ route('admin.syndicate-family.index') }}">
+                        <i class="fas fa-users"></i>Syndicate Family Manager
+                    </a>
+                </li>
+                @endcan
+                @can('our_team-edit')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.our-team.*') ? 'active' : '' }}" href="{{ route('admin.our-team.edit') }}">
+                        <i class="fas fa-user-friends"></i>Our Team Manager
+                    </a>
+                </li>
+                @endcan
                 @can('syndicate_users-view')
                 <li class="nav-item">
                     <a class="nav-link {{ Route::is('admin.syndicate-users.*') ? 'active' : '' }}" href="{{ route('admin.syndicate-users.index') }}">

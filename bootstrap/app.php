@@ -26,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'set_admin_as_default_guard' => \App\Http\Middleware\SetAdminAsDefaultGuard::class,
             'admin_content' => \App\Http\Middleware\AdminContent::class,
+            'web_content' => \App\Http\Middleware\WebContent::class,
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,

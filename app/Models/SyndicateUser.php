@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use App\Helpers\FilesHelper;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class SyndicateUser extends Model
+class SyndicateUser extends Authenticatable
 {
     use SoftDeletes;
+
+    protected $guard = 'web_user';
 
     protected $table = 'syndicate_user';
 

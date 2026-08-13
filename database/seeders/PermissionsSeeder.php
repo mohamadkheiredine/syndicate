@@ -56,6 +56,48 @@ class PermissionsSeeder extends Seeder
             array('name' => 'settings-edit', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
             array('name' => 'cms_settings-edit', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
 
+            // Logo
+            array('name' => 'logo-edit', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+
+            // Our Team
+            array('name' => 'our_team-edit', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'our_team-publish', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+
+            // Banners
+            array('name' => 'banners-view', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'banners-create', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'banners-edit', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'banners-delete', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'banners-publish', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+
+            // News
+            array('name' => 'news-view', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'news-create', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'news-edit', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'news-delete', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'news-publish', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+
+            // Syndicate Activities
+            array('name' => 'syndicate_activities-view', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'syndicate_activities-create', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'syndicate_activities-edit', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'syndicate_activities-delete', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'syndicate_activities-publish', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+
+            // Syndicate Offers
+            array('name' => 'syndicate_offers-view', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'syndicate_offers-create', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'syndicate_offers-edit', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'syndicate_offers-delete', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'syndicate_offers-publish', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+
+            // Syndicate Family
+            array('name' => 'syndicate_family-view', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'syndicate_family-create', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'syndicate_family-edit', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'syndicate_family-delete', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'syndicate_family-publish', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+
             // Permissions
             array('name' => 'permissions-view', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
             array('name' => 'permissions-create', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),

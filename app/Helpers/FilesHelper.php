@@ -74,6 +74,39 @@ class FilesHelper
     }
 
     /**
+     * Resolve which image to show for rows that carry both a live image and a
+     * pending (publish_*) one awaiting approval - same rule the old site used
+     * everywhere: show the pending image only once it's been approved.
+     *
+     */
+    static function getDisplayImageUrl($folder, $mainImage, $publishImage = null, $publishStatus = null)
+    {
+        if($publishImage && (int) $publishStatus === 1){
+            return self::getImageFullUrl($folder.'/'.$publishImage);
+        }
+
+        return $mainImage ? self::getImageFullUrl($folder.'/'.$mainImage) : null;
+    }
+
+    /**
+     * Delete a file given its folder and filename directly - for models whose
+     * image column isn't literally named "image" (deleteFile() assumes that).
+     *
+     */
+    static function deleteFileByName($folder, $filename)
+    {
+        if(Config::get('services.s3bucket.status')){
+            $path = Storage::disk('s3')->delete(config('filesystems.disks.s3.bucket_name').'/'.$folder.'/'.$filename);
+        } else {
+            $path = public_path().Storage::url($folder.'/'.$filename);
+        }
+
+        if(File::exists($path)){
+            File::delete($path);
+        }
+    }
+
+    /**
      * Delete file function
      *
      */

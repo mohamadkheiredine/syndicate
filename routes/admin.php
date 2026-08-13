@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Cms\Auth\LoginController;
 use App\Http\Controllers\Cms\Base\ProfileController;
 use App\Http\Controllers\Cms\Base\CmsSettingController;
+use App\Http\Controllers\Cms\Base\LogoController;
 use App\Http\Controllers\Cms\Base\AdminController;
 use App\Http\Controllers\Cms\Base\DashboardController;
 use App\Http\Controllers\Cms\Base\RoleController;
@@ -32,6 +33,12 @@ use App\Http\Controllers\Cms\IncomeController;
 use App\Http\Controllers\Cms\ExpenseController;
 use App\Http\Controllers\Cms\YearlyPaymentController;
 use App\Http\Controllers\Cms\ElectionFeeController;
+use App\Http\Controllers\Cms\BannerController;
+use App\Http\Controllers\Cms\NewsController;
+use App\Http\Controllers\Cms\SyndicateActivityController;
+use App\Http\Controllers\Cms\SyndicateOfferController;
+use App\Http\Controllers\Cms\SyndicateFamilyController;
+use App\Http\Controllers\Cms\Base\OurTeamController;
 
 /*
 |--------------------------------------------------------------------------
@@ -77,6 +84,18 @@ Route::middleware(['auth:admin', 'set_admin_as_default_guard', 'admin_content'])
         Route::prefix('cms-settings')->name('cms-settings.')->group(function () {
             Route::get('/', [CmsSettingController::class, 'edit'])->name('edit');
             Route::put('/', [CmsSettingController::class, 'update'])->name('update');
+        });
+
+        // LOGO
+        Route::prefix('logo')->name('logo.')->group(function () {
+            Route::get('/', [LogoController::class, 'edit'])->name('edit');
+            Route::put('/', [LogoController::class, 'update'])->name('update');
+        });
+
+        // OUR TEAM
+        Route::prefix('our-team')->name('our-team.')->group(function () {
+            Route::get('/', [OurTeamController::class, 'edit'])->name('edit');
+            Route::put('/', [OurTeamController::class, 'update'])->name('update');
         });
 
         // ADMIN LOGOUT ROUTE
@@ -126,6 +145,26 @@ Route::middleware(['auth:admin', 'set_admin_as_default_guard', 'admin_content'])
 
         // REPORTING
         Route::get('reports', [ReportsController::class, 'index'])->name('reports.index');
+
+        // BANNERS
+        Route::put('banners/{id}/toggle-publish', [BannerController::class, 'togglePublish'])->name('banners.toggle-publish');
+        Route::resource('banners', BannerController::class)->except(['show']);
+
+        // NEWS
+        Route::put('news/{id}/toggle-publish', [NewsController::class, 'togglePublish'])->name('news.toggle-publish');
+        Route::resource('news', NewsController::class)->except(['show']);
+
+        // SYNDICATE ACTIVITIES
+        Route::put('syndicate-activities/{id}/toggle-publish', [SyndicateActivityController::class, 'togglePublish'])->name('syndicate-activities.toggle-publish');
+        Route::resource('syndicate-activities', SyndicateActivityController::class)->except(['show']);
+
+        // SYNDICATE OFFERS
+        Route::put('syndicate-offers/{id}/toggle-publish', [SyndicateOfferController::class, 'togglePublish'])->name('syndicate-offers.toggle-publish');
+        Route::resource('syndicate-offers', SyndicateOfferController::class)->except(['show']);
+
+        // SYNDICATE FAMILY
+        Route::put('syndicate-family/{id}/toggle-publish', [SyndicateFamilyController::class, 'togglePublish'])->name('syndicate-family.toggle-publish');
+        Route::resource('syndicate-family', SyndicateFamilyController::class)->except(['show']);
 
         // DOCUMENTS
         Route::resource('documents', DocumentController::class)->except(['show']);

@@ -44,6 +44,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'web_user' => [
+            'driver' => 'session',
+            'provider' => 'syndicate_users',
+        ],
         'api' => [
             'driver' => 'sanctum',
             'provider' => 'users',
@@ -75,6 +79,10 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
+        ],
+        'syndicate_users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\SyndicateUser::class,
         ],
 
         // 'users' => [
