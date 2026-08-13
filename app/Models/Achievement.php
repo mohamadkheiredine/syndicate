@@ -10,6 +10,21 @@ class Achievement extends Model
 
     public $timestamps = false;
 
+    protected $fillable = [
+        'title',
+        'number',
+        'status',
+        'publish_status',
+    ];
+
+    // Legacy shadow column - the new CMS never writes to this (see
+    // AchievementController), only the real title field above. NOT NULL
+    // with no DB default, so it still needs a value on insert. This table
+    // has no admin_id column, same as Home Sliders.
+    protected $attributes = [
+        'publish_title' => '',
+    ];
+
     public function getDisplayNumberAttribute()
     {
         $raw = $this->getAttributes();

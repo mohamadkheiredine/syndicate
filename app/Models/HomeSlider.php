@@ -11,6 +11,41 @@ class HomeSlider extends Model
 
     public $timestamps = false;
 
+    protected $fillable = [
+        'main_image',
+        'mobile_image',
+        'title',
+        'subtitle',
+        'text',
+        'status',
+        'publish_status',
+    ];
+
+    // Legacy shadow columns - the new CMS never writes to these (see
+    // HomeSliderController), only the real fields above. NOT NULL with no
+    // DB default, so they still need a value on insert. Note: this table
+    // has no admin_id column at all, unlike every other module.
+    protected $attributes = [
+        'publish_title' => '',
+        'publish_subtitle' => '',
+        'publish_text' => '',
+    ];
+
+    // Standard accessors for the CMS edit form's raw stored image (as
+    // opposed to display_image/display_mobile_image below, which resolve
+    // the published-vs-pending choice for the public site). Safe to define
+    // here because all the display_* accessors read via getAttributes(),
+    // bypassing these.
+    public function getMainImageAttribute($value)
+    {
+        return $value ? FilesHelper::getImageFullUrl('home-slider/' . $value) : null;
+    }
+
+    public function getMobileImageAttribute($value)
+    {
+        return $value ? FilesHelper::getImageFullUrl('home-slider/' . $value) : null;
+    }
+
     public function getDisplayImageAttribute()
     {
         $raw = $this->getAttributes();

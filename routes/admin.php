@@ -39,6 +39,12 @@ use App\Http\Controllers\Cms\SyndicateActivityController;
 use App\Http\Controllers\Cms\SyndicateOfferController;
 use App\Http\Controllers\Cms\SyndicateFamilyController;
 use App\Http\Controllers\Cms\Base\OurTeamController;
+use App\Http\Controllers\Cms\Base\SyndicateAboutController;
+use App\Http\Controllers\Cms\Base\TermsConditionsController;
+use App\Http\Controllers\Cms\SyndicateAdvertisementController;
+use App\Http\Controllers\Cms\SyndicateOthersAdvertisementController;
+use App\Http\Controllers\Cms\HomeSliderController;
+use App\Http\Controllers\Cms\AchievementController;
 
 /*
 |--------------------------------------------------------------------------
@@ -97,6 +103,34 @@ Route::middleware(['auth:admin', 'set_admin_as_default_guard', 'admin_content'])
             Route::get('/', [OurTeamController::class, 'edit'])->name('edit');
             Route::put('/', [OurTeamController::class, 'update'])->name('update');
         });
+
+        // ABOUT THE SYNDICATE
+        Route::prefix('about-syndicate')->name('about-syndicate.')->group(function () {
+            Route::get('/', [SyndicateAboutController::class, 'edit'])->name('edit');
+            Route::put('/', [SyndicateAboutController::class, 'update'])->name('update');
+        });
+
+        // TERMS & CONDITIONS (terms-conditions, rules, education - same table, different row)
+        Route::prefix('terms-conditions/{page}')->name('terms-conditions.')->where(['page' => 'terms-conditions|rules|education'])->group(function () {
+            Route::get('/', [TermsConditionsController::class, 'edit'])->name('edit');
+            Route::put('/', [TermsConditionsController::class, 'update'])->name('update');
+        });
+
+        // GET INVOLVED ADVERTISE
+        Route::put('syndicate-advertisement/{id}/toggle-publish', [SyndicateAdvertisementController::class, 'togglePublish'])->name('syndicate-advertisement.toggle-publish');
+        Route::resource('syndicate-advertisement', SyndicateAdvertisementController::class)->except(['show']);
+
+        // OTHERS ADVERTISEMENT
+        Route::put('syndicate-others-advertisement/{id}/toggle-publish', [SyndicateOthersAdvertisementController::class, 'togglePublish'])->name('syndicate-others-advertisement.toggle-publish');
+        Route::resource('syndicate-others-advertisement', SyndicateOthersAdvertisementController::class)->except(['show']);
+
+        // HOME SLIDERS
+        Route::put('home-sliders/{id}/toggle-publish', [HomeSliderController::class, 'togglePublish'])->name('home-sliders.toggle-publish');
+        Route::resource('home-sliders', HomeSliderController::class)->except(['show']);
+
+        // ACHIEVEMENTS
+        Route::put('achievements/{id}/toggle-publish', [AchievementController::class, 'togglePublish'])->name('achievements.toggle-publish');
+        Route::resource('achievements', AchievementController::class)->except(['show']);
 
         // ADMIN LOGOUT ROUTE
         Route::post('logout', [LoginController::class, 'logout'])->name('logout');

@@ -63,4 +63,13 @@ class SyndicateActivity extends Model
     {
         return $value ? FilesHelper::getImageFullUrl('activities-files/' . $value) : null;
     }
+
+    // Old CMS ran rich-text through htmlspecialchars() before saving, so
+    // existing rows have literally-escaped tags (e.g. "&lt;p&gt;") stored -
+    // decode so the edit form's rich-text editor renders them instead of
+    // showing the raw escaped text. A no-op on new, already-clean saves.
+    public function getDescriptionAttribute($value)
+    {
+        return stripslashes(html_entity_decode($value ?? ''));
+    }
 }

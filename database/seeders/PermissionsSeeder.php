@@ -63,6 +63,42 @@ class PermissionsSeeder extends Seeder
             array('name' => 'our_team-edit', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
             array('name' => 'our_team-publish', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
 
+            // About The Syndicate
+            array('name' => 'about_syndicate-edit', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'about_syndicate-publish', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+
+            // Terms & Conditions (covers terms-conditions, rules, education)
+            array('name' => 'terms_conditions-edit', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'terms_conditions-publish', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+
+            // Get Involved Advertise
+            array('name' => 'syndicate_advertisement-view', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'syndicate_advertisement-create', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'syndicate_advertisement-edit', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'syndicate_advertisement-delete', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'syndicate_advertisement-publish', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+
+            // Others Advertisement
+            array('name' => 'syndicate_others_advertisement-view', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'syndicate_others_advertisement-create', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'syndicate_others_advertisement-edit', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'syndicate_others_advertisement-delete', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'syndicate_others_advertisement-publish', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+
+            // Home Sliders
+            array('name' => 'home_sliders-view', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'home_sliders-create', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'home_sliders-edit', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'home_sliders-delete', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'home_sliders-publish', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+
+            // Achievements
+            array('name' => 'achievements-view', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'achievements-create', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'achievements-edit', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'achievements-delete', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'achievements-publish', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+
             // Banners
             array('name' => 'banners-view', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
             array('name' => 'banners-create', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),

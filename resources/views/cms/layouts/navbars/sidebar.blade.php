@@ -155,6 +155,68 @@
                     </a>
                 </li>
                 @endcan
+                @can('about_syndicate-edit')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.about-syndicate.*') ? 'active' : '' }}" href="{{ route('admin.about-syndicate.edit') }}">
+                        <i class="fas fa-info-circle"></i>About The Syndicate Manager
+                    </a>
+                </li>
+                @endcan
+                @can('terms_conditions-edit')
+                <li class="nav-item">
+                    <a class="nav-link" href="#terms-conditions-menu" data-toggle="collapse" role="button" aria-expanded="{{ Route::is('admin.terms-conditions.*') ? 'true' : 'false' }}" aria-controls="terms-conditions-menu">
+                        <i class="fas fa-file-contract text-primary"></i>
+                        <span class="nav-link-text">Terms & Conditions</span>
+                    </a>
+                    <div class="collapse {{ Route::is('admin.terms-conditions.*') ? 'show' : '' }}" id="terms-conditions-menu">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->route('page') === 'terms-conditions' ? 'active' : '' }}" href="{{ route('admin.terms-conditions.edit', 'terms-conditions') }}">
+                                    Terms & Conditions
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->route('page') === 'rules' ? 'active' : '' }}" href="{{ route('admin.terms-conditions.edit', 'rules') }}">
+                                    Rules
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->route('page') === 'education' ? 'active' : '' }}" href="{{ route('admin.terms-conditions.edit', 'education') }}">
+                                    Education
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                @endcan
+                @can('syndicate_advertisement-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.syndicate-advertisement.*') ? 'active' : '' }}" href="{{ route('admin.syndicate-advertisement.index') }}">
+                        <i class="fas fa-ad"></i>Get Involved Advertise Manager
+                    </a>
+                </li>
+                @endcan
+                @can('syndicate_others_advertisement-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.syndicate-others-advertisement.*') ? 'active' : '' }}" href="{{ route('admin.syndicate-others-advertisement.index') }}">
+                        <i class="fas fa-bullhorn"></i>Others Advertisement Manager
+                    </a>
+                </li>
+                @endcan
+                @can('home_sliders-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.home-sliders.*') ? 'active' : '' }}" href="{{ route('admin.home-sliders.index') }}">
+                        <i class="fas fa-sliders-h"></i>Home Sliders
+                    </a>
+                </li>
+                @endcan
+                @can('achievements-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.achievements.*') ? 'active' : '' }}" href="{{ route('admin.achievements.index') }}">
+                        <i class="fas fa-trophy"></i>Achievements
+                    </a>
+                </li>
+                @endcan
                 @can('syndicate_users-view')
                 <li class="nav-item">
                     <a class="nav-link {{ Route::is('admin.syndicate-users.*') ? 'active' : '' }}" href="{{ route('admin.syndicate-users.index') }}">
