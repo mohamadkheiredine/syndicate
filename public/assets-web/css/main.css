@@ -4204,3 +4204,25 @@ footer #nav-footer-secondary li{
 	}
 
 }
+
+/* Form feedback boxes - originally page-specific inline styles on
+   form.php/contact.php, consolidated here so every page can use them. */
+.groupGreen{
+	width: 90%;
+	float: left;
+	background: #0F6;
+	border-top: 1px solid #0F6;
+	border-bottom: 1px solid #0F6;
+	padding: 10px;
+	margin-bottom: 5px;
+}
+
+.groupRed{
+	width: 90%;
+	float: left;
+	background: #FBB8B5;
+	border-top: 1px solid #e6e5e5;
+	border-bottom: 1px solid #e6e5e5;
+	padding: 10px;
+	margin-bottom: 5px;
+}

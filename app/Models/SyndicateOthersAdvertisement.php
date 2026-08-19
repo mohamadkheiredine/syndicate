@@ -46,6 +46,15 @@ class SyndicateOthersAdvertisement extends Model
         return $value ? FilesHelper::getImageFullUrl('syndicate-others-advertisement/' . $value) : null;
     }
 
+    // Used by the public sidebar - shows the pending (publish_main_image)
+    // image once it's been approved, otherwise falls back to main_image.
+    public function getDisplayImageAttribute()
+    {
+        $raw = $this->getAttributes();
+
+        return FilesHelper::getDisplayImageUrl('syndicate-others-advertisement', $raw['main_image'], $raw['publish_main_image'], $raw['publish_status']);
+    }
+
     public function getPositionLabelAttribute()
     {
         return self::POSITIONS[(int) $this->getAttributes()['position']] ?? '';

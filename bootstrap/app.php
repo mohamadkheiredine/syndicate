@@ -24,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
+            'auth' => \App\Http\Middleware\Authenticate::class,
             'set_admin_as_default_guard' => \App\Http\Middleware\SetAdminAsDefaultGuard::class,
             'admin_content' => \App\Http\Middleware\AdminContent::class,
             'web_content' => \App\Http\Middleware\WebContent::class,

@@ -45,13 +45,13 @@
                 @include('cms.components.inputs.text', ['label' => 'Mobile Number', 'asterix' => true, 'name' => 'mobile_number', 'maxlength' => 255])
 
                 {{-- Blood Type --}}
-                @include('cms.components.inputs.text', ['label' => 'Blood Type', 'asterix' => true, 'name' => 'blood_type', 'maxlength' => 10])
+                @include('cms.components.inputs.select-single', ['label' => 'Blood Type', 'asterix' => true, 'name' => 'blood_type', 'placeholder' => '-Select Blood Type-', 'rows' => [['id' => 'A+', 'title' => 'A+'], ['id' => 'A-', 'title' => 'A-'], ['id' => 'B+', 'title' => 'B+'], ['id' => 'B-', 'title' => 'B-'], ['id' => 'AB+', 'title' => 'AB+'], ['id' => 'AB-', 'title' => 'AB-'], ['id' => 'O+', 'title' => 'O+'], ['id' => 'O-', 'title' => 'O-']], 'value_attribute' => 'id', 'attribute' => 'title', 'row' => $row])
 
                 {{-- Has ID Card --}}
                 @include('cms.components.inputs.checkbox', ['label' => 'Has ID Card', 'name' => 'has_id', 'value' => true])
 
                 {{-- Company --}}
-                @include('cms.components.inputs.text', ['label' => 'Company Name', 'asterix' => true, 'name' => 'company', 'maxlength' => 255])
+                @include('cms.components.inputs.select-single', ['label' => 'Company Name', 'asterix' => true, 'name' => 'company', 'placeholder' => '-Select Company-', 'rows' => [['id' => 'Alfa', 'title' => 'Alfa'], ['id' => 'Touch', 'title' => 'Touch']], 'value_attribute' => 'id', 'attribute' => 'title', 'row' => $row])
 
                 {{-- Department --}}
                 @include('cms.components.inputs.text', ['label' => 'Department', 'name' => 'department', 'maxlength' => 255])

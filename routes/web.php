@@ -1,7 +1,14 @@
 <?php
 
+use App\Http\Controllers\Web\AboutController;
 use App\Http\Controllers\Web\AccountController;
+use App\Http\Controllers\Web\ActivityController;
+use App\Http\Controllers\Web\AuthController;
+use App\Http\Controllers\Web\GetInvolvedController;
 use App\Http\Controllers\Web\HomeController;
+use App\Http\Controllers\Web\NewsController;
+use App\Http\Controllers\Web\OfferController;
+use App\Http\Controllers\Web\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web_content'])->group(function () {
@@ -11,23 +18,44 @@ Route::middleware(['web_content'])->group(function () {
 
     Route::match(['get', 'post', 'delete'], '/delete-account', [AccountController::class, 'handle'])->name('web.accounts.delete');
 
+    // ABOUT THE SYNDICATE
+    Route::get('/aboutus', [AboutController::class, 'show'])->name('web.aboutus');
+    Route::get('/previous-members/{year}', [AboutController::class, 'previousMembers'])->name('web.previous-members');
+    Route::post('/join-syndicate', [AboutController::class, 'join'])->name('web.join-syndicate');
+
+    // ACTIVITIES, OFFERS, NEWS (logged-in members only)
+    Route::middleware(['auth:web_user'])->group(function () {
+        Route::get('/activities', [ActivityController::class, 'index'])->name('web.activities');
+        Route::get('/activities-details/{id}', [ActivityController::class, 'show'])->name('web.activities.show');
+
+        Route::get('/offers', [OfferController::class, 'index'])->name('web.offers');
+        Route::get('/offers-details/{id}', [OfferController::class, 'show'])->name('web.offers.show');
+
+        Route::get('/news', [NewsController::class, 'index'])->name('web.news');
+        Route::get('/news-details/{id}', [NewsController::class, 'show'])->name('web.news.show');
+    });
+
+    // GET INVOLVED
+    Route::get('/page-donate', [GetInvolvedController::class, 'advertise'])->name('web.page-donate');
+    Route::get('/form', [GetInvolvedController::class, 'registerForm'])->name('web.form');
+    Route::post('/register', [GetInvolvedController::class, 'register'])->name('web.register');
+    Route::get('/activate-account', [GetInvolvedController::class, 'activate'])->name('web.activate-account');
+    Route::get('/contact', [GetInvolvedController::class, 'contact'])->name('web.contact');
+    Route::post('/contact', [GetInvolvedController::class, 'sendContact'])->name('web.contact.send');
+
     // PLACEHOLDER PAGES
     // Empty for now - linked from the homepage (nav, CTA boxes, article grid) so
     // route() resolves everywhere. Each one gets its own real controller/view
     // when that page is built.
-    Route::view('/aboutus', 'web.pages.aboutus')->name('web.aboutus');
-    Route::view('/activities', 'web.pages.activities')->name('web.activities');
-    Route::view('/offers', 'web.pages.offers')->name('web.offers');
-    Route::view('/news', 'web.pages.news')->name('web.news');
-    Route::view('/page-donate', 'web.pages.page-donate')->name('web.page-donate');
-    Route::view('/form', 'web.pages.form')->name('web.form');
-    Route::view('/contact', 'web.pages.contact')->name('web.contact');
-    Route::view('/previous-members', 'web.pages.previous-members')->name('web.previous-members');
     Route::view('/terms', 'web.pages.terms')->name('web.terms');
-    Route::view('/user-login', 'web.pages.user-login')->name('web.user-login');
-    Route::get('/logout', function () {
-        session()->forget('web_user_id');
-        return redirect()->route('web.home');
-    })->name('web.logout');
+    Route::get('/user-login', [AuthController::class, 'show'])->name('web.user-login');
+    Route::post('/login', [AuthController::class, 'login'])->name('web.login');
+    Route::get('/logout', [AuthController::class, 'logout'])->name('web.logout');
+
+    // MY PROFILE (logged-in members only)
+    Route::middleware(['auth:web_user'])->group(function () {
+        Route::get('/user-profile', [ProfileController::class, 'show'])->name('web.user-profile');
+        Route::post('/user-profile', [ProfileController::class, 'update'])->name('web.user-profile.update');
+    });
 
 });

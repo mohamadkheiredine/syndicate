@@ -41,13 +41,13 @@
                 @include('cms.components.inputs.text', ['label' => 'Mobile Number', 'asterix' => true, 'name' => 'mobile_number', 'maxlength' => 255])
 
                 {{-- Blood Type --}}
-                @include('cms.components.inputs.text', ['label' => 'Blood Type', 'asterix' => true, 'name' => 'blood_type', 'maxlength' => 10])
+                @include('cms.components.inputs.select-single', ['label' => 'Blood Type', 'asterix' => true, 'name' => 'blood_type', 'placeholder' => '-Select Blood Type-', 'rows' => [['id' => 'A+', 'title' => 'A+'], ['id' => 'A-', 'title' => 'A-'], ['id' => 'B+', 'title' => 'B+'], ['id' => 'B-', 'title' => 'B-'], ['id' => 'AB+', 'title' => 'AB+'], ['id' => 'AB-', 'title' => 'AB-'], ['id' => 'O+', 'title' => 'O+'], ['id' => 'O-', 'title' => 'O-']], 'value_attribute' => 'id', 'attribute' => 'title'])
 
                 {{-- Has ID Card --}}
                 @include('cms.components.inputs.checkbox', ['label' => 'Has ID Card', 'name' => 'has_id', 'value' => true])
 
                 {{-- Company --}}
-                @include('cms.components.inputs.text', ['label' => 'Company Name', 'asterix' => true, 'name' => 'company', 'maxlength' => 255])
+                @include('cms.components.inputs.select-single', ['label' => 'Company Name', 'asterix' => true, 'name' => 'company', 'placeholder' => '-Select Company-', 'rows' => [['id' => 'Alfa', 'title' => 'Alfa'], ['id' => 'Touch', 'title' => 'Touch']], 'value_attribute' => 'id', 'attribute' => 'title'])
 
                 {{-- Department --}}
                 @include('cms.components.inputs.text', ['label' => 'Department', 'name' => 'department', 'maxlength' => 255])
@@ -84,6 +84,13 @@
 
                 {{-- Confirm Password --}}
                 @include('cms.components.inputs.text', ['label' => 'Confirm Password', 'type' => 'password', 'asterix' => true, 'name' => 'confirm_password'])
+
+                @can('syndicate_users-activate')
+                {{-- Activated --}}
+                @include('cms.components.inputs.checkbox', ['label' => 'Activated', 'name' => 'activation_code', 'value' => 1, 'text' => 'Leave this off to save it as pending instead - you can activate it later from the list.'])
+                @else
+                <small><em>This user will stay pending until someone with activation rights approves them.</em></small>
+                @endcan
 
                 <div class="text-center">
                     <button type="submit" class="btn btn-success mt-4">Save</button>

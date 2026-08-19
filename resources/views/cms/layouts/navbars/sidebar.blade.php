@@ -217,6 +217,20 @@
                     </a>
                 </li>
                 @endcan
+                @can('splash_sliders-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.splash-sliders.*') ? 'active' : '' }}" href="{{ route('admin.splash-sliders.index') }}">
+                        <i class="fas fa-images"></i>Splash Sliders
+                    </a>
+                </li>
+                @endcan
+                @can('ad_sliders-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.ad-sliders.*') ? 'active' : '' }}" href="{{ route('admin.ad-sliders.index') }}">
+                        <i class="fas fa-images"></i>Ad Sliders
+                    </a>
+                </li>
+                @endcan
                 @can('syndicate_users-view')
                 <li class="nav-item">
                     <a class="nav-link {{ Route::is('admin.syndicate-users.*') ? 'active' : '' }}" href="{{ route('admin.syndicate-users.index') }}">

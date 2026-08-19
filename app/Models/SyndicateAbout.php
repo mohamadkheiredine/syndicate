@@ -30,4 +30,18 @@ class SyndicateAbout extends Model
     {
         return stripslashes(html_entity_decode($value ?? ''));
     }
+
+    // Used by the public About page - shows the pending (publish_description)
+    // text once it's been approved, otherwise falls back to description.
+    // Matches the old site's exact fallback rule.
+    public function getDisplayDescriptionAttribute()
+    {
+        $raw = $this->getAttributes();
+
+        if($raw['publish_description'] != '' && (int) $raw['publish_status'] === 1){
+            return stripslashes(html_entity_decode($raw['publish_description']));
+        }
+
+        return $this->description;
+    }
 }

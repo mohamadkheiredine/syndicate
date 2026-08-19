@@ -26,6 +26,9 @@
                 {{-- Offers Image --}}
                 @include('cms.components.inputs.image', ['label' => 'Offers Image', 'name' => 'main_image', 'value' => $row->main_image])
 
+                {{-- New Image --}}
+                @include('cms.components.inputs.image', ['label' => 'New Image', 'name' => 'new_image', 'value' => $row->new_image])
+
                 <div class="form-group">
                     <label class="form-control-label d-block">PDF</label>
                     @if($row->pdf)

@@ -33,6 +33,8 @@ class Authenticate extends Middleware
         if($guards[0] == 'admin'){
             $admin = Auth::guard('admin')->user();
             if($guards[0] == 'admin' && !$admin) return redirect()->route('admin.login');
+        } elseif($guards[0] == 'web_user'){
+            if(!Auth::guard('web_user')->check()) return redirect()->route('web.home');
         }
 
         return $next($request);

@@ -19,7 +19,7 @@
 						<li><a>Members Previous Years</a>
 							<ul>
 								@foreach($web_family_years as $year)
-								<li><a href="{{ route('web.previous-members') }}?prev_year={{ $year }}&#demo-tabs-hor1">{{ $year }}</a></li>
+								<li><a href="{{ route('web.previous-members', $year) }}">{{ $year }}</a></li>
 								@endforeach
 							</ul>
 						</li>

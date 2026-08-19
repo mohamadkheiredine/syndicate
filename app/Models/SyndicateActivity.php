@@ -72,4 +72,11 @@ class SyndicateActivity extends Model
     {
         return stripslashes(html_entity_decode($value ?? ''));
     }
+
+    // Same double-decode as description above - the old CMS ran this
+    // through htmlspecialchars() too.
+    public function getShortDescriptionAttribute($value)
+    {
+        return stripslashes(html_entity_decode($value ?? ''));
+    }
 }

@@ -67,12 +67,14 @@
                         Floor: <strong>{{ $row->floor }}</strong>
                     </td>
                     <td>{{ $row->has_id ? 'YES' : 'NO' }}</td>
-                    <td>
-                        @if($row->activation_code == 'activated')
-                        <span class="badge badge-success">Activated</span>
-                        @else
-                        <span class="badge badge-warning">Deactivated</span>
-                        @endif
+                    <td class="adjust-element">
+                        <label class="custom-toggle mb-0">
+                            <input
+                                @can('syndicate_users-activate') onclick="toggleActivation({{ $row->id }})" @else disabled @endcan
+                                class="activate-toggle-js" type="checkbox" value="{{ $row->id }}"
+                                @if($row->activation_code == 'activated') checked @endif>
+                            <span class="custom-toggle-slider rounded-circle"></span>
+                        </label>
                     </td>
                     <td class="text-right">
                         <div class="dropdown">
@@ -82,16 +84,6 @@
                             <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
                                 @can('syndicate_users-edit')
                                 <a class="dropdown-item" href="{{ route('admin.'.$page_info['link'].'.edit', $row) }}">Edit</a>
-                                @endcan
-
-                                @can('syndicate_users-activate')
-                                <form action="{{ route('admin.'.$page_info['link'].'.activate') }}" method="post">
-                                    @csrf
-                                    <input type="hidden" name="id" value="{{ $row->id }}">
-                                    <button type="submit" class="dropdown-item">
-                                        {{ $row->activation_code == 'activated' ? 'Deactivate' : 'Activate' }}
-                                    </button>
-                                </form>
                                 @endcan
 
                                 @can('syndicate_users-reset_password')
@@ -124,3 +116,27 @@
     @include('cms.layouts.footers.auth')
 </div>
 @endsection
+
+@can('syndicate_users-activate')
+@push('script')
+<script type="text/javascript">
+    // toggle activation using fetch api
+    function toggleActivation(id) {
+        fetch("{{ route('admin.'.$page_info['link'].'.activate') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json, text-plain, */*",
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({ id: id })
+        }).then((data) => {
+            location.reload();
+        }).catch((error) => {
+            console.log(error);
+        });
+    }
+</script>
+@endpush
+@endcan

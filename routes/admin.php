@@ -45,6 +45,8 @@ use App\Http\Controllers\Cms\SyndicateAdvertisementController;
 use App\Http\Controllers\Cms\SyndicateOthersAdvertisementController;
 use App\Http\Controllers\Cms\HomeSliderController;
 use App\Http\Controllers\Cms\AchievementController;
+use App\Http\Controllers\Cms\SplashSliderController;
+use App\Http\Controllers\Cms\AdSliderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -131,6 +133,14 @@ Route::middleware(['auth:admin', 'set_admin_as_default_guard', 'admin_content'])
         // ACHIEVEMENTS
         Route::put('achievements/{id}/toggle-publish', [AchievementController::class, 'togglePublish'])->name('achievements.toggle-publish');
         Route::resource('achievements', AchievementController::class)->except(['show']);
+
+        // SPLASH SLIDERS
+        Route::put('splash-sliders/{id}/toggle-publish', [SplashSliderController::class, 'togglePublish'])->name('splash-sliders.toggle-publish');
+        Route::resource('splash-sliders', SplashSliderController::class)->except(['show']);
+
+        // AD SLIDERS
+        Route::put('ad-sliders/{id}/toggle-publish', [AdSliderController::class, 'togglePublish'])->name('ad-sliders.toggle-publish');
+        Route::resource('ad-sliders', AdSliderController::class)->except(['show']);
 
         // ADMIN LOGOUT ROUTE
         Route::post('logout', [LoginController::class, 'logout'])->name('logout');

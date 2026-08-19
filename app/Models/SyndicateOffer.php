@@ -15,6 +15,7 @@ class SyndicateOffer extends Model
         'admin_id',
         'title',
         'main_image',
+        'new_image',
         'pdf',
         'start_date',
         'end_date',
@@ -26,13 +27,11 @@ class SyndicateOffer extends Model
         'publish_status',
     ];
 
-    // Legacy shadow columns and the never-finished "new_image" field - the
-    // new CMS never writes to these (see SyndicateOfferController), only the
-    // real fields above. NOT NULL with no DB default, so they still need a
-    // value on insert.
+    // Legacy shadow columns - the new CMS never writes to these (see
+    // SyndicateOfferController), only the real fields above. NOT NULL with
+    // no DB default, so they still need a value on insert.
     protected $attributes = [
         'publish_title' => '',
-        'new_image' => '',
         'publish_main_image' => '',
         'publish_start_date' => '1970-01-01',
         'publish_end_date' => '1970-01-01',
@@ -57,6 +56,15 @@ class SyndicateOffer extends Model
         return $value ? FilesHelper::getImageFullUrl('offers/' . $value) : null;
     }
 
+    // Old CMS had a second image slot for this ("new_image") that was never
+    // actually finished/used anywhere on the site or API - kept here only
+    // because it was explicitly requested to exist in the CRUD, not because
+    // anything reads it.
+    public function getNewImageAttribute($value)
+    {
+        return $value ? FilesHelper::getImageFullUrl('offers/' . $value) : null;
+    }
+
     public function getPdfAttribute($value)
     {
         return $value ? FilesHelper::getImageFullUrl('offers-files/' . $value) : null;
@@ -67,6 +75,13 @@ class SyndicateOffer extends Model
     // decode so the edit form's rich-text editor renders them instead of
     // showing the raw escaped text. A no-op on new, already-clean saves.
     public function getDescriptionAttribute($value)
+    {
+        return stripslashes(html_entity_decode($value ?? ''));
+    }
+
+    // Same double-decode as description above - the old CMS ran this
+    // through htmlspecialchars() too.
+    public function getShortDescriptionAttribute($value)
     {
         return stripslashes(html_entity_decode($value ?? ''));
     }

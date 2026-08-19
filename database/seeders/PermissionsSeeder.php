@@ -99,6 +99,20 @@ class PermissionsSeeder extends Seeder
             array('name' => 'achievements-delete', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
             array('name' => 'achievements-publish', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
 
+            // Splash Sliders
+            array('name' => 'splash_sliders-view', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'splash_sliders-create', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'splash_sliders-edit', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'splash_sliders-delete', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'splash_sliders-publish', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+
+            // Ad Sliders
+            array('name' => 'ad_sliders-view', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'ad_sliders-create', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'ad_sliders-edit', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'ad_sliders-delete', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'ad_sliders-publish', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+
             // Banners
             array('name' => 'banners-view', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
             array('name' => 'banners-create', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),

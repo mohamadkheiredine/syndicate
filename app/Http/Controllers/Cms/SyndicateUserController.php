@@ -9,6 +9,7 @@ use App\Models\SyndicateUser;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SyndicateUserController extends Controller
@@ -214,6 +215,14 @@ class SyndicateUserController extends Controller
             $photo = FilesHelper::storeFile('syndicate-users', $request->file('photo'));
         }
 
+        // Only an admin account with the syndicate_users-activate permission
+        // gets a say in this at all - and even then it's their choice via
+        // the checkbox, not automatic. Anyone else's new user always stays
+        // pending until someone with that permission activates them later
+        // from the list.
+        $canActivate = Auth::guard('admin')->user()->can('syndicate_users-activate');
+        $activated = $canActivate && $request->boolean('activation_code');
+
         SyndicateUser::create([
             'first_name' => $request->first_name,
             'fathers_name' => $request->fathers_name,
@@ -236,6 +245,7 @@ class SyndicateUserController extends Controller
             'department' => $request->department,
             'unit' => $request->unit,
             'date_employment' => $this->parseDate($request->date_employment),
+            'activation_code' => $activated ? 'activated' : '',
         ]);
 
         return redirect()->route('admin.' . $page_info['link'] . '.index')->withStatus('Syndicate user successfully created.');

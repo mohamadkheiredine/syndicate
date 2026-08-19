@@ -59,6 +59,13 @@ class SyndicateNews extends Model
         return stripslashes(html_entity_decode($value ?? ''));
     }
 
+    // Same double-decode as description above - the old CMS ran this
+    // through htmlspecialchars() too.
+    public function getShortDescriptionAttribute($value)
+    {
+        return stripslashes(html_entity_decode($value ?? ''));
+    }
+
     // Still used by the homepage teaser - safe to keep even though the new
     // CMS never populates publish_main_image, it just falls through to
     // main_image whenever that column is empty.
