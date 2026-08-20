@@ -113,6 +113,77 @@
 
             <h6 class="navbar-heading text-muted">MANAGEMENT</h6>
             <ul class="navbar-nav mb-3">
+                @can('syndicate_users-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.syndicate-users.*') ? 'active' : '' }}" href="{{ route('admin.syndicate-users.index') }}">
+                        <i class="fas fa-id-card"></i>Syndicate Users
+                    </a>
+                </li>
+                @endcan
+                @can('members_payment-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.members-payment.*') ? 'active' : '' }}" href="{{ route('admin.members-payment.index') }}">
+                        <i class="fas fa-hand-holding-usd"></i>Members Payment
+                    </a>
+                </li>
+                @endcan
+                @can('reports-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.reports.*') ? 'active' : '' }}" href="{{ route('admin.reports.index') }}">
+                        <i class="fas fa-chart-line"></i>Reporting
+                    </a>
+                </li>
+                @endcan
+                @can('documents-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.documents.*') ? 'active' : '' }}" href="{{ route('admin.documents.index') }}">
+                        <i class="fas fa-file"></i>Documents
+                    </a>
+                </li>
+                @endcan
+                @can('income-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.income.*') ? 'active' : '' }}" href="{{ route('admin.income.index') }}">
+                        <i class="fas fa-sort-amount-up"></i>Income
+                    </a>
+                </li>
+                @endcan
+                @can('expenses-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.expenses.*') ? 'active' : '' }}" href="{{ route('admin.expenses.index') }}">
+                        <i class="fas fa-sort-amount-down"></i>Expenses
+                    </a>
+                </li>
+                @endcan
+                @can('yearly_payment-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.yearly-payment.*') ? 'active' : '' }}" href="{{ route('admin.yearly-payment.index') }}">
+                        <i class="fas fa-calendar-alt"></i>Yearly Payment
+                    </a>
+                </li>
+                @endcan
+                @can('election_fees-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.election-fees.*') ? 'active' : '' }}" href="{{ route('admin.election-fees.index') }}">
+                        <i class="fas fa-dollar-sign"></i>Election Fees
+                    </a>
+                </li>
+                @endcan
+            </ul>
+
+            @can('syndicate_advertisement-view')
+            <h6 class="navbar-heading text-muted">FORMS</h6>
+            <ul class="navbar-nav mb-3">
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.syndicate-advertisement.*') ? 'active' : '' }}" href="{{ route('admin.syndicate-advertisement.index') }}">
+                        <i class="fas fa-ad"></i>Get Involved Advertise Manager
+                    </a>
+                </li>
+            </ul>
+            @endcan
+
+            <h6 class="navbar-heading text-muted">MAINTENANCE</h6>
+            <ul class="navbar-nav mb-3">
                 @can('banners-view')
                 <li class="nav-item">
                     <a class="nav-link {{ Route::is('admin.banners.*') ? 'active' : '' }}" href="{{ route('admin.banners.index') }}">
@@ -189,13 +260,6 @@
                     </div>
                 </li>
                 @endcan
-                @can('syndicate_advertisement-view')
-                <li class="nav-item">
-                    <a class="nav-link {{ Route::is('admin.syndicate-advertisement.*') ? 'active' : '' }}" href="{{ route('admin.syndicate-advertisement.index') }}">
-                        <i class="fas fa-ad"></i>Get Involved Advertise Manager
-                    </a>
-                </li>
-                @endcan
                 @can('syndicate_others_advertisement-view')
                 <li class="nav-item">
                     <a class="nav-link {{ Route::is('admin.syndicate-others-advertisement.*') ? 'active' : '' }}" href="{{ route('admin.syndicate-others-advertisement.index') }}">
@@ -231,70 +295,18 @@
                     </a>
                 </li>
                 @endcan
-                @can('syndicate_users-view')
-                <li class="nav-item">
-                    <a class="nav-link {{ Route::is('admin.syndicate-users.*') ? 'active' : '' }}" href="{{ route('admin.syndicate-users.index') }}">
-                        <i class="fas fa-id-card"></i>Syndicate Users
-                    </a>
-                </li>
-                @endcan
-                @can('members_payment-view')
-                <li class="nav-item">
-                    <a class="nav-link {{ Route::is('admin.members-payment.*') ? 'active' : '' }}" href="{{ route('admin.members-payment.index') }}">
-                        <i class="fas fa-hand-holding-usd"></i>Members Payment
-                    </a>
-                </li>
-                @endcan
-                @can('reports-view')
-                <li class="nav-item">
-                    <a class="nav-link {{ Route::is('admin.reports.*') ? 'active' : '' }}" href="{{ route('admin.reports.index') }}">
-                        <i class="fas fa-chart-line"></i>Reporting
-                    </a>
-                </li>
-                @endcan
-                @can('documents-view')
-                <li class="nav-item">
-                    <a class="nav-link {{ Route::is('admin.documents.*') ? 'active' : '' }}" href="{{ route('admin.documents.index') }}">
-                        <i class="fas fa-file"></i>Documents
-                    </a>
-                </li>
-                @endcan
-                @can('income-view')
-                <li class="nav-item">
-                    <a class="nav-link {{ Route::is('admin.income.*') ? 'active' : '' }}" href="{{ route('admin.income.index') }}">
-                        <i class="fas fa-sort-amount-up"></i>Income
-                    </a>
-                </li>
-                @endcan
-                @can('expenses-view')
-                <li class="nav-item">
-                    <a class="nav-link {{ Route::is('admin.expenses.*') ? 'active' : '' }}" href="{{ route('admin.expenses.index') }}">
-                        <i class="fas fa-sort-amount-down"></i>Expenses
-                    </a>
-                </li>
-                @endcan
-                @can('yearly_payment-view')
-                <li class="nav-item">
-                    <a class="nav-link {{ Route::is('admin.yearly-payment.*') ? 'active' : '' }}" href="{{ route('admin.yearly-payment.index') }}">
-                        <i class="fas fa-calendar-alt"></i>Yearly Payment
-                    </a>
-                </li>
-                @endcan
-                @can('election_fees-view')
-                <li class="nav-item">
-                    <a class="nav-link {{ Route::is('admin.election-fees.*') ? 'active' : '' }}" href="{{ route('admin.election-fees.index') }}">
-                        <i class="fas fa-dollar-sign"></i>Election Fees
-                    </a>
-                </li>
-                @endcan
-                @can('push_notifications-create')
+            </ul>
+
+            @can('push_notifications-create')
+            <h6 class="navbar-heading text-muted">NOTIFICATION</h6>
+            <ul class="navbar-nav mb-3">
                 <li class="nav-item">
                     <a class="nav-link {{ Route::is('admin.push-notifications.*') ? 'active' : '' }}" href="{{ route('admin.push-notifications.index') }}">
                         <i class="fas fa-bell"></i>Push Notifications
                     </a>
                 </li>
-                @endcan
             </ul>
+            @endcan
         </div>
     </div>
 </nav>

@@ -35,6 +35,16 @@ class Authenticate extends Middleware
             if($guards[0] == 'admin' && !$admin) return redirect()->route('admin.login');
         } elseif($guards[0] == 'web_user'){
             if(!Auth::guard('web_user')->check()) return redirect()->route('web.home');
+        } elseif($guards[0] == 'sanctum'){
+            if(!Auth::guard('sanctum')->check()){
+                return response()->json([
+                    'error' => [
+                        'debugger' => 'Unauthenticated',
+                        'code' => 401,
+                        'message' => 'messages.authentication_missing',
+                    ],
+                ])->setStatusCode(400);
+            }
         }
 
         return $next($request);

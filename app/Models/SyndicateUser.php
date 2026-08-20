@@ -6,10 +6,11 @@ use App\Helpers\FilesHelper;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\HasApiTokens;
 
 class SyndicateUser extends Authenticatable
 {
-    use SoftDeletes;
+    use SoftDeletes, HasApiTokens;
 
     protected $guard = 'web_user';
 
@@ -110,5 +111,10 @@ class SyndicateUser extends Authenticatable
     public function getPhotoAttribute($value)
     {
         return $value ? FilesHelper::getImageFullUrl('syndicate-users/' . $value) : null;
+    }
+
+    public function pushTokens()
+    {
+        return $this->hasMany(UserPush::class, 'users_id');
     }
 }
