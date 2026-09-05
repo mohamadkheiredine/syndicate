@@ -20,14 +20,14 @@ class OurTeam extends Model
 
     public function getMainImageAttribute($value)
     {
-        return $value ? FilesHelper::getImageFullUrl('our-team/' . $value) : null;
+        return $value ? FilesHelper::getImageFullUrl('our_team/' . $value) : null;
     }
 
     public function getDisplayImageAttribute()
     {
         $raw = $this->getAttributes();
 
-        return FilesHelper::getDisplayImageUrl('our-team', $raw['main_image'], $raw['publish_main_image'], $raw['publish_status']);
+        return FilesHelper::getDisplayImageUrl('our_team', $raw['main_image'], $raw['publish_main_image'], $raw['publish_status'], 'publish_our_team');
     }
 
     public function getDisplayDescriptionAttribute()

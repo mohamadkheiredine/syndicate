@@ -18,26 +18,35 @@
                 <div class="card-body">
                     @include('cms.components.alert', ['with' => 'success', 'bg' => 'success'])
 
+                    @include('cms.components.alert', ['with' => 'warning', 'bg' => 'warning'])
+
                     @include('cms.components.alert', ['with' => 'error', 'bg' => 'danger'])
 
                     <div class="row">
                         <div class="col-xl-6 mb-5 mb-xl-0">
-                            <h6 class="heading-small text-muted mb-3">Bulk Push Notification</h6>
+                            <h6 class="heading-small text-muted mb-3">Bulk Push</h6>
 
                             <form method="POST" action="{{ route('admin.'.$page_info['link'].'.bulk') }}" enctype="multipart/form-data" autocomplete="off">
                                 @csrf
 
-                                {{-- Segments --}}
-                                @include('cms.components.inputs.select-single', ['label' => 'Segments', 'asterix' => true, 'name' => 'segments', 'placeholder' => 'Please Choose a Segment', 'rows' => $segments, 'value_attribute' => 'id', 'attribute' => 'title'])
-
                                 {{-- Image --}}
-                                @include('cms.components.inputs.image', ['label' => 'Image', 'name' => 'bulk_image'])
+                                @include('cms.components.inputs.image', ['label' => 'Push Image', 'name' => 'image'])
 
-                                {{-- Subject --}}
-                                @include('cms.components.inputs.text', ['label' => 'Subject', 'asterix' => true, 'name' => 'bulk_subject', 'maxlength' => 255])
+                                {{-- Title --}}
+                                @include('cms.components.inputs.text', ['label' => 'Title', 'asterix' => true, 'name' => 'title', 'maxlength' => 255])
 
                                 {{-- Message --}}
-                                @include('cms.components.inputs.textarea', ['label' => 'Message', 'asterix' => true, 'name' => 'bulk_message'])
+                                @include('cms.components.inputs.textarea', ['label' => 'Message', 'asterix' => true, 'name' => 'message'])
+
+                                {{-- Segment - defaults to "All" so a submission never leaves this unset --}}
+                                <div class="form-group">
+                                    <label class="form-control-label">Send To</label>
+                                    <select class="select2-custom form-control" name="segments">
+                                        @foreach ($segment_options as $segment)
+                                        <option value="{{ $segment }}" @selected(old('segments', 'All') == $segment)>{{ $segment }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
 
                                 <div class="text-center">
                                     <button type="submit" class="btn btn-success mt-4">Send</button>
@@ -45,22 +54,28 @@
                             </form>
                         </div>
                         <div class="col-xl-6">
-                            <h6 class="heading-small text-muted mb-3">Single Push Notification</h6>
+                            <h6 class="heading-small text-muted mb-3">Targeted Push</h6>
 
                             <form method="POST" action="{{ route('admin.'.$page_info['link'].'.single') }}" enctype="multipart/form-data" autocomplete="off">
                                 @csrf
 
-                                {{-- Users Push --}}
-                                @include('cms.components.inputs.select-multiple', ['label' => 'Users', 'asterix' => true, 'name' => 'users', 'rows' => $targeted_syndicate_users, 'value_attribute' => 'id', 'attribute' => 'title'])
+                                {{-- Users --}}
+                                @include('cms.components.inputs.select-multiple', ['label' => 'Users', 'asterix' => true, 'name' => 'users', 'rows' => $users, 'value_attribute' => 'id', 'attribute' => null, 'multi_attributes' => 'first_name - last_name'])
 
                                 {{-- Image --}}
-                                @include('cms.components.inputs.image', ['label' => 'Image', 'name' => 'single_image'])
+                                @include('cms.components.inputs.image', ['label' => 'Push Image', 'name' => 'image'])
 
-                                {{-- Subject En --}}
-                                @include('cms.components.inputs.text', ['label' => 'Subject', 'asterix' => true, 'name' => 'single_subject', 'maxlength' => 255])
+                                {{-- Title --}}
+                                @include('cms.components.inputs.text', ['label' => 'Title', 'asterix' => true, 'name' => 'title', 'maxlength' => 255])
 
-                                {{-- Message En --}}
-                                @include('cms.components.inputs.textarea', ['label' => 'Message', 'asterix' => true, 'name' => 'single_message'])
+                                {{-- Message --}}
+                                @include('cms.components.inputs.textarea', ['label' => 'Message', 'asterix' => true, 'name' => 'message'])
+
+                                {{-- Badge (optional - defaults to Increase +1, same as old, when left unset) --}}
+                                @include('cms.components.inputs.select-single', ['label' => 'iOS Badge', 'name' => 'badge', 'placeholder' => 'Default (Increase by 1)', 'rows' => $badge_options, 'value_attribute' => 'id', 'attribute' => 'title'])
+
+                                {{-- Badge number - used by Manual (set to) and Auto (add, negative subtracts) --}}
+                                @include('cms.components.inputs.number', ['label' => 'iOS Badge Number', 'name' => 'badge_count', 'text' => 'Used with Manual (set the badge to this) and Auto (add this each send; negative subtracts). Ignored on Default.'])
 
                                 <div class="text-center">
                                     <button type="submit" class="btn btn-success mt-4">Send</button>

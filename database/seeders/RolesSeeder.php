@@ -27,5 +27,17 @@ class RolesSeeder extends Seeder
             'name' => 'developer',
             'guard_name' => 'admin',
         ]);
+        Role::create([
+            'name' => 'management-admin',
+            'guard_name' => 'admin',
+        ]);
+        Role::create([
+            'name' => 'content-super-admin',
+            'guard_name' => 'admin',
+        ]);
+        Role::create([
+            'name' => 'content-admin',
+            'guard_name' => 'admin',
+        ]);
     }
 }

@@ -92,7 +92,7 @@ class SyndicateFamilyController extends Controller
         SyndicateFamily::create([
             'admin_id' => Auth::guard('admin')->user()->id,
             'name' => $request->name,
-            'main_image' => FilesHelper::storeFile('syndicate-family', $request->file('main_image')),
+            'main_image' => FilesHelper::storeFile('syndicate_family', $request->file('main_image')),
             'designation' => $request->designation,
             'syndicate_year' => $request->syndicate_year,
             'status' => $published ? '1' : '0',
@@ -140,9 +140,9 @@ class SyndicateFamilyController extends Controller
         $image = $row->getAttributes()['main_image'];
         if($request->hasFile('main_image')){
             if($image){
-                FilesHelper::deleteFileByName('syndicate-family', $image);
+                FilesHelper::deleteFileByName('syndicate_family', $image);
             }
-            $image = FilesHelper::storeFile('syndicate-family', $request->file('main_image'));
+            $image = FilesHelper::storeFile('syndicate_family', $request->file('main_image'));
         }
 
         $row->update([
@@ -185,7 +185,7 @@ class SyndicateFamilyController extends Controller
         $row = SyndicateFamily::findOrFail($id);
 
         if($row->getAttributes()['main_image']){
-            FilesHelper::deleteFileByName('syndicate-family', $row->getAttributes()['main_image']);
+            FilesHelper::deleteFileByName('syndicate_family', $row->getAttributes()['main_image']);
         }
 
         $row->delete();

@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Helpers\FilesHelper;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 
 class SyndicateUser extends Authenticatable
@@ -50,9 +49,26 @@ class SyndicateUser extends Authenticatable
         'blood_type',
     ];
 
+    // Matches old's real Users model $hidden list exactly (App\Models\Api\Users
+    // in syndicate-website-master) - old hides far more than just the
+    // password/reset_code this project originally hid, so a raw toArray()
+    // response (e.g. syndicateLogin) was leaking fields old never returns.
     protected $hidden = [
+        'updated_at',
         'password',
         'reset_code',
+        'status',
+        'activation_code',
+        'fathers_name',
+        'mothers_name',
+        'dob',
+        'home_number',
+        'company',
+        'any_file',
+        'linkedin',
+        'facebook',
+        'lang',
+        'profile_link',
     ];
 
     // These legacy columns are NOT NULL with no DB default and aren't exposed in the
@@ -76,41 +92,41 @@ class SyndicateUser extends Authenticatable
         'date_employment' => 'datetime',
     ];
 
+    // Matches the old CMS exactly - plain MD5, no salt.
     public function setPasswordAttribute($value)
     {
-        $this->attributes['password'] = Hash::make($value);
+        $this->attributes['password'] = md5($value);
     }
 
-    /**
-     * Check a plaintext password against this user's stored hash. The old
-     * CMS hashed every member's password with MD5 (all 1,279 imported rows
-     * are 32-char MD5 hex), which is unsuitable for password storage - fast
-     * to brute-force, no per-hash salt. New saves always use bcrypt via
-     * setPasswordAttribute() above; this transparently upgrades a row still
-     * on the legacy MD5 hash to bcrypt the moment its owner proves they
-     * know the password, so the switch happens without resetting anyone.
-     *
-     */
     public function verifyPassword($plain)
     {
-        $stored = $this->getAttributes()['password'];
-
-        if(Hash::check($plain, $stored)){
-            return true;
-        }
-
-        if(strlen($stored) === 32 && md5($plain) === $stored){
-            $this->attributes['password'] = Hash::make($plain);
-            $this->save();
-            return true;
-        }
-
-        return false;
+        return md5($plain) === $this->getAttributes()['password'];
     }
+
+    // These plain string columns genuinely store NULL for a real chunk of
+    // imported rows (579 confirmed, e.g. members imported without an
+    // address on file) rather than ''. Old's real API response shows
+    // these as empty strings, not null, for the same rows - coercing on
+    // read here rather than back-filling the imported data, since old's
+    // own DB dump isn't reachable to confirm/fix at the source.
+    public function getKazaAttribute($value) { return $value ?? ''; }
+    public function getCityAttribute($value) { return $value ?? ''; }
+    public function getStreetAttribute($value) { return $value ?? ''; }
+    public function getBuildingAttribute($value) { return $value ?? ''; }
+    public function getFloorAttribute($value) { return $value ?? ''; }
+    public function getDepartmentAttribute($value) { return $value ?? ''; }
+    public function getUnitAttribute($value) { return $value ?? ''; }
 
     public function getPhotoAttribute($value)
     {
-        return $value ? FilesHelper::getImageFullUrl('syndicate-users/' . $value) : null;
+        return $value ? FilesHelper::getImageFullUrl('user/' . $value) : null;
+    }
+
+    // Missing before - the profile page's blade template already expected
+    // $user->any_file to resolve to a full URL.
+    public function getAnyFileAttribute($value)
+    {
+        return $value ? FilesHelper::getImageFullUrl('upload_file/' . $value) : null;
     }
 
     public function pushTokens()

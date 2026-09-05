@@ -85,7 +85,7 @@ class BannerController extends Controller
         $published = $canPublish && $request->boolean('publish_status');
 
         SyndicateBanner::create([
-            'main_image' => FilesHelper::storeFile('banners', $request->file('main_image')),
+            'main_image' => FilesHelper::storeFile('banner', $request->file('main_image')),
             'status' => $published ? '1' : '0',
             'publish_status' => $published ? 1 : 0,
         ]);
@@ -128,9 +128,9 @@ class BannerController extends Controller
         $image = $row->getAttributes()['main_image'];
         if($request->hasFile('main_image')){
             if($image){
-                FilesHelper::deleteFileByName('banners', $image);
+                FilesHelper::deleteFileByName('banner', $image);
             }
-            $image = FilesHelper::storeFile('banners', $request->file('main_image'));
+            $image = FilesHelper::storeFile('banner', $request->file('main_image'));
         }
 
         $row->update([
@@ -170,7 +170,7 @@ class BannerController extends Controller
         $row = SyndicateBanner::findOrFail($id);
 
         if($row->getAttributes()['main_image']){
-            FilesHelper::deleteFileByName('banners', $row->getAttributes()['main_image']);
+            FilesHelper::deleteFileByName('banner', $row->getAttributes()['main_image']);
         }
 
         $row->delete();

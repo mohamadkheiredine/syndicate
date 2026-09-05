@@ -3,22 +3,26 @@
 namespace App\Http\Controllers\Cms\Base;
 
 use App\Helpers\FilesHelper;
+use App\Helpers\OneSignalHelper;
 use App\Http\Controllers\Controller;
-
-use App\Models\UserPushInbox;
+use App\Models\SyndicateUser;
+use App\Models\UsersPush;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use App\Helpers\OneSignalHelper;
-use App\Models\UserPush;
-use App\Models\PushInbox;
 
+/**
+ * Ports old's real, LIVE admin push-notification sender exactly:
+ * Admin\PushNotificationNewController (push()/send_push()/send_single_push()).
+ *
+ * Old also has an Admin\PushNotificationController (index/bulk_push/single_push,
+ * subject/message fields, PushInbox tracking) - but its routes are commented
+ * out in old's real admin.php, so it's dead code, never reachable. An
+ * earlier pass this session was accidentally modeled on that dead
+ * controller; this rewrite matches the one old's site actually runs.
+ *
+ */
 class PushNotificationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     function __construct()
     {
         $this->middleware('permission:push_notifications-create', ['only' => ['index', 'bulk_push', 'single_push']]);
@@ -26,155 +30,80 @@ class PushNotificationController extends Controller
 
     public function page_info()
     {
-        $page_info = [
+        return [
             'title' => 'Push Notifications',
-            'link' => 'push-notifications'
+            'link' => 'push-notifications',
         ];
-        return $page_info;
     }
+
 
     public function index()
     {
         $page_info = $this->page_info();
 
-        // For Bulk Push
-        $segments = [
-            [
-                'id' => 'Total Subscriptions',
-                'title' => 'Subscribed Users (All users that are subscribed to receive notifications)'
-            ],
-            [
-                'id' => 'Active Subscriptions',
-                'title' => 'Active Users (Last Session less than 168 hours ago)'
-            ],
-            [
-                'id' => 'Inactive Subscriptions',
-                'title' => 'Inactive Users (Last Session greater than 168 hours ago)'
-            ],
-            [
-                'id' => 'Engaged Subscriptions',
-                'title' => 'Engaged Users (Last frequent Session less than 168 hours ago)'
-            ],
-            [
-                'id' => 'All SMS Subscriptions',
-                'title' => 'Engaged Users (All users that are subscribed to receive SMS notifications)'
-            ],
-            [
-                'id' => 'All Email Subscriptions',
-                'title' => 'Subscribed Users (All users that are subscribed to receive email notifications)'
-            ]
+        $users = SyndicateUser::orderBy('first_name')->get(['id', 'first_name', 'last_name', 'email']);
+
+        $badge_options = [
+            ['id' => 'manual', 'title' => 'Manual (set a fixed number)'],
+            ['id' => 'auto', 'title' => 'Auto (increase/decrease by this number each time)'],
         ];
 
-        // For Targeted Push — syndicate users who have at least one registered device
-        $targeted_syndicate_users = [];
-        $registered_devices = UserPush::with('syndicateUser')->has('syndicateUser')->get()->unique('users_id');
-        foreach ($registered_devices as $key => $device) {
-            $targeted_syndicate_users[$key]['id'] = $device->users_id;
-            $targeted_syndicate_users[$key]['title'] = $device->syndicateUser->first_name . ' ' . $device->syndicateUser->last_name . ' - ' . $device->syndicateUser->email;
-        }
+        // Same 3 choices old's admin push screen offers - these are
+        // OneSignal's own built-in segments, not something computed from
+        // our DB, so no query needed to build this list.
+        $segment_options = ['All', 'Active Users', 'Inactive Users'];
 
-        return view('cms.base.' . $page_info['link'] . '.index', compact('page_info', 'segments', 'targeted_syndicate_users'));
+        return view('cms.base.' . $page_info['link'] . '.index', compact('page_info', 'users', 'badge_options', 'segment_options'));
     }
+
 
     public function bulk_push(Request $request)
     {
         $page_info = $this->page_info();
 
         $this->validate($request, [
-            'segments' => 'required',
-            'bulk_subject' => 'required',
-            'bulk_message' => 'required'
+            'title' => 'required',
+            'message' => 'required',
         ]);
 
-        $return_success = [];
-        $return_error = [];
-        $player_ids = [];
-        $included_segments = [];
-        $data = [];
         $info = [];
+        $data = ['type' => 'bulk'];
 
-        // Check if a file exist and is valid.
-        $notification_image_path = '';
-        if ($request->hasFile('bulk_image')) {
-            if ($request->file('bulk_image')->isValid()) {
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $filename = FilesHelper::storeFile($page_info['link'], $request->file('image'));
+            $image_url = FilesHelper::getImageFullUrl($page_info['link'] . '/' . $filename);
 
-                $this->validate($request, [
-                    'bulk_image' => 'required|mimes:png,jpg,jpeg|max:500'
-                ]);
+            $info['big_picture'] = $image_url;
+            $data['image_url'] = $image_url;
+        }
 
-                $notification_image_path = FilesHelper::storeFile($page_info['link'], $request->bulk_image);
-                $image_path = FilesHelper::getImageFullUrl($page_info['link'] . '/' . $notification_image_path);
+        // Ports old's real send_push(): a chosen segment (All/Active
+        // Users/Inactive Users) goes straight to OneSignal as-is. Old's
+        // only fallback for "no segment chosen" queried the wrong table
+        // (user_push instead of users_push) and would error out - the
+        // form here always submits a segment (defaults to "All"), so
+        // that branch should never be hit, but if it somehow is, this
+        // targets every registered device via the correct table instead
+        // of reproducing old's bug.
+        if ($request->filled('segments')) {
+            $info['player_ids'] = [];
+            $info['included_segments'] = [$request->segments];
+        } else {
+            $info['player_ids'] = UsersPush::pluck('player_id')->filter()->values()->all();
+            $info['included_segments'] = [];
 
-                /*
-                * This image will be displayed in the notification
-                */
-
-                // Android
-                $info['big_picture'] = $image_path;
-
-                // iOS
-                $media_id = 'id' . Str::random(5);
-                $info['ios_attachments'] = [$media_id => $image_path];
-
-                /*
-                * At the same time, we will send the image in "data" in case
-                * they want to display it int the application
-                */
-
-                list($width, $height, $type, $attr) = getimagesize($image_path);
-                $data['image_width'] = $width;
-                $data['image_height'] = $height;
-                $data['image_url'] = $image_path;
+            if (empty($info['player_ids'])) {
+                return redirect()->back()->withWarning('No Users Found');
             }
         }
 
-        // Could be "All", "Active Users", "Inactive Users"
-        $included_segments = [$request->segments];
-
-        $headings = [
-            "en" => trim(request()->bulk_subject)
-        ];
-        $contents = [
-            "en" => trim(request()->bulk_message)
-        ];
-
-        $info['headings'] = $headings;
-        $info['contents'] = $contents;
+        $info['contents'] = ['en' => trim($request->message)];
+        $info['headings'] = ['en' => trim($request->title)];
         $info['data'] = $data;
-        $info['player_ids'] = $player_ids;
-        $info['included_segments'] = $included_segments;
 
         $result = OneSignalHelper::oneSignal($info);
 
-        if (!empty($result['error'])) {
-            $return_error = $result['error'];
-        } else {
-            $status = $result['status'];
-            $message = $result['message'];
-            $debugger = $result['debugger'];
-            if ($status == 'OK') {
-                PushInbox::create([
-                    'subject' => trim(request()->bulk_subject),
-                    'message' => trim(request()->bulk_message),
-                    'image' => $notification_image_path,
-                    'type' => 'bulk'
-                ]);
-
-                $return_success = $debugger;
-            } else {
-                if ($status == 'OK_WITH_ERRORS') {
-                    $return_success = $debugger;
-                } else {
-                    $return_error = $debugger;
-                }
-            }
-        }
-
-        if ($return_success) {
-            return redirect()->back()->withSuccess($return_success);
-        } elseif ($return_error) {
-            return redirect()->back()->withError($return_error);
-        }
+        return $this->respondFromOneSignal($result, $page_info);
     }
 
     public function single_push(Request $request)
@@ -183,119 +112,74 @@ class PushNotificationController extends Controller
 
         $this->validate($request, [
             'users' => 'required|array',
-            'single_subject' => 'required',
-            'single_message' => 'required'
+            'title' => 'required',
+            'message' => 'required',
+            'badge_count' => 'nullable|integer',
         ]);
 
-        $return_success = [];
-        $return_error = [];
-        $player_ids = [];
-        $data = [];
         $info = [];
+        $data = ['type' => 'bulk'];
 
-        // Check if a file exist and is valid.
-        $notification_image_path = '';
-        if ($request->hasFile('single_image')) {
-            if ($request->file('single_image')->isValid()) {
-
-                $this->validate($request, [
-                    'single_image' => 'required|mimes:png,jpg,jpeg|max:500'
-                ]);
-
-                $notification_image_path = FilesHelper::storeFile($page_info['link'], $request->single_image);
-                $image_path = FilesHelper::getImageFullUrl($page_info['link'] . '/' . $notification_image_path);
-
-                /**
-                 * this image will be displayed in the notification
-                 */
-                // Android
-                $info['big_picture'] = $image_path;
-
-                // iOS
-                $media_id = 'id' . Str::random(5);
-                $info['ios_attachments'] = [$media_id => $image_path];
-                /**
-                 * at the same time, we will send the image in "data" in case
-                 * they want to display it int the application
-                 */
-                list($width, $height, $type, $attr) = getimagesize($image_path);
-                $data['image_width'] = $width;
-                $data['image_height'] = $height;
-                $data['image_url'] = $image_path;
-            }
+        // iOS home-screen badge. "manual" sets the badge to badge_count,
+        // "auto" adds badge_count to it (negative subtracts). Left unset
+        // it just increases by 1, same default old used. These are now
+        // actually forwarded to OneSignal (see OneSignalHelper::oneSignal).
+        $badgeCount = $request->filled('badge_count') ? (int) $request->badge_count : 1;
+        if ($request->badge == 'manual') {
+            $info['ios_badgeType'] = 'SetTo';
+            $info['ios_badgeCount'] = $badgeCount;
+        } elseif ($request->badge == 'auto') {
+            $info['ios_badgeType'] = 'Increase';
+            $info['ios_badgeCount'] = $badgeCount;
+        } else {
+            $info['ios_badgeType'] = 'Increase';
+            $info['ios_badgeCount'] = 1;
         }
 
-        // Set badge
-        $info['ios_badgeType'] = 'Increase';
-        $info['ios_badgeCount'] = '1';
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $filename = FilesHelper::storeFile($page_info['link'], $request->file('image'));
+            $image_url = FilesHelper::getImageFullUrl($page_info['link'] . '/' . $filename);
 
-        /**
-         * Get the registered devices for the selected syndicate users
-         */
-
-        $selected_devices = UserPush::select('users_id', 'registration_id')->whereIn('users_id', $request->users)->get();
-
-        if (count($selected_devices) > 0) {
-            foreach ($selected_devices as $device) {
-                $player_ids[] = $device->registration_id;
-            }
+            $info['big_picture'] = $image_url;
+            $data['image_url'] = $image_url;
         }
+
+        $player_ids = UsersPush::whereIn('user_id', $request->users)
+            ->pluck('player_id')
+            ->values()
+            ->all();
 
         if (empty($player_ids)) {
             return redirect()->back()->withWarning('No Users Found');
         }
 
-        $headings = [
-            "en" => trim(request()->single_subject)
-        ];
-        $contents = [
-            "en" => trim(request()->single_message)
-        ];
-
-        $info['headings'] = $headings;
-        $info['contents'] = $contents;
+        $info['contents'] = ['en' => trim($request->message)];
+        $info['headings'] = ['en' => trim($request->title)];
         $info['data'] = $data;
         $info['player_ids'] = $player_ids;
-        $info['filter'] = [];
 
         $result = OneSignalHelper::oneSignal($info);
 
-        if (!empty($result['error'])) {
-            $return_error = $result['error'];
-        } else {
-            $status = $result['status'];
-            $message = $result['message'];
-            $debugger = $result['debugger'];
-            if ($status == 'OK') {
-                foreach ($selected_devices as $device) {
-                    $pushInbox = PushInbox::create([
-                        'subject' => trim(request()->single_subject),
-                        'message' => trim(request()->single_message),
-                        'image' => $notification_image_path,
-                        'type' => 'single'
-                    ]);
-
-                    UserPushInbox::create([
-                        'user_id' => $device->users_id,
-                        'push_inbox_id' => $pushInbox->id
-                    ]);
-                }
-
-                $return_success = $debugger;
-            } else {
-                if ($status == 'OK_WITH_ERRORS') {
-                    $return_success = $debugger;
-                } else {
-                    $return_error = $debugger;
-                }
-            }
-        }
-
-        if ($return_success) {
-            return redirect()->back()->withSuccess($return_success);
-        } elseif ($return_error) {
-            return redirect()->back()->withError($return_error);
-        }
+        return $this->respondFromOneSignal($result, $page_info);
     }
 
+
+    private function respondFromOneSignal($result, $page_info)
+    {
+        if (!empty($result['error'])) {
+            return redirect()->back()->withError($result['error']);
+        }
+
+        $debugger = $result['debugger'];
+
+        if ($result['status'] == 'OK') {
+            return redirect()->back()->withSuccess($debugger);
+        }
+
+        if ($result['status'] == 'OK_WITH_ERRORS') {
+            return redirect()->back()->withWarning($debugger);
+        }
+
+        return redirect()->back()->withError($debugger);
+    }
 }

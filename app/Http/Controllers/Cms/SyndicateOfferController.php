@@ -108,7 +108,7 @@ class SyndicateOfferController extends Controller
             'title' => $request->title,
             'main_image' => $request->hasFile('main_image') ? FilesHelper::storeFile('offers', $request->file('main_image')) : '',
             'new_image' => $request->hasFile('new_image') ? FilesHelper::storeFile('offers', $request->file('new_image')) : '',
-            'pdf' => $request->hasFile('pdf') ? FilesHelper::storeFile('offers-files', $request->file('pdf')) : '',
+            'pdf' => $request->hasFile('pdf') ? FilesHelper::storeFile('offers', $request->file('pdf')) : '',
             'start_date' => $startDate ?? now()->format('Y-m-d'),
             'end_date' => $endDate ?? now()->format('Y-m-d'),
             'place' => $request->place,
@@ -189,9 +189,9 @@ class SyndicateOfferController extends Controller
         $pdf = $row->getAttributes()['pdf'];
         if($request->hasFile('pdf')){
             if($pdf){
-                FilesHelper::deleteFileByName('offers-files', $pdf);
+                FilesHelper::deleteFileByName('offers', $pdf);
             }
-            $pdf = FilesHelper::storeFile('offers-files', $request->file('pdf'));
+            $pdf = FilesHelper::storeFile('offers', $request->file('pdf'));
         }
 
         $row->update([
@@ -253,7 +253,7 @@ class SyndicateOfferController extends Controller
         }
 
         if($row->getAttributes()['pdf']){
-            FilesHelper::deleteFileByName('offers-files', $row->getAttributes()['pdf']);
+            FilesHelper::deleteFileByName('offers', $row->getAttributes()['pdf']);
         }
 
         $row->delete();

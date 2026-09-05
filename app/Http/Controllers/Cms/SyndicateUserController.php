@@ -212,7 +212,7 @@ class SyndicateUserController extends Controller
 
         $photo = null;
         if ($request->hasFile('photo')) {
-            $photo = FilesHelper::storeFile('syndicate-users', $request->file('photo'));
+            $photo = FilesHelper::storeFile('user', $request->file('photo'));
         }
 
         // Only an admin account with the syndicate_users-activate permission
@@ -288,7 +288,7 @@ class SyndicateUserController extends Controller
 
         $photo = $row->getAttributes()['photo'];
         if ($request->hasFile('photo')) {
-            $photo = FilesHelper::storeFile('syndicate-users', $request->file('photo'));
+            $photo = FilesHelper::storeFile('user', $request->file('photo'));
         }
 
         $row->update([

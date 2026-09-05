@@ -2,6 +2,7 @@
 
 use Database\Seeders\AdminSeeder;
 use Database\Seeders\CmsSettingsSeeder;
+use Database\Seeders\ContentRolesPermissionsSeeder;
 use Database\Seeders\CountriesSeeder;
 use Database\Seeders\FixedSectionsSeeder;
 use Database\Seeders\GendersSeeder;
@@ -34,6 +35,7 @@ class DatabaseSeeder extends Seeder
             ModelHasRolesSeeder::class,
             PermissionsSeeder::class,
             RoleHasPermissionsSeeder::class,
+            ContentRolesPermissionsSeeder::class,
             SettingsSeeder::class,
             SocialMediaSeeder::class,
         ]);

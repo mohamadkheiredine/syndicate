@@ -78,11 +78,18 @@ class FilesHelper
      * pending (publish_*) one awaiting approval - same rule the old site used
      * everywhere: show the pending image only once it's been approved.
      *
+     * The old site stored the published copy in a genuinely different S3
+     * folder from the pending one (not just a different filename in the
+     * same folder), and the naming isn't a predictable "publish_" + folder
+     * rule - each one is its own real folder name. $publishFolder lets a
+     * caller pass that real name; defaults to $folder for any caller that
+     * hasn't been given one yet.
+     *
      */
-    static function getDisplayImageUrl($folder, $mainImage, $publishImage = null, $publishStatus = null)
+    static function getDisplayImageUrl($folder, $mainImage, $publishImage = null, $publishStatus = null, $publishFolder = null)
     {
         if($publishImage && (int) $publishStatus === 1){
-            return self::getImageFullUrl($folder.'/'.$publishImage);
+            return self::getImageFullUrl(($publishFolder ?? $folder).'/'.$publishImage);
         }
 
         return $mainImage ? self::getImageFullUrl($folder.'/'.$mainImage) : null;

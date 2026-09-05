@@ -73,6 +73,6 @@ class SyndicateNews extends Model
     {
         $raw = $this->getAttributes();
 
-        return FilesHelper::getDisplayImageUrl('news', $raw['main_image'], $raw['publish_main_image'], $raw['publish_status']);
+        return FilesHelper::getDisplayImageUrl('news', $raw['main_image'], $raw['publish_main_image'], $raw['publish_status'], 'publish_news');
     }
 }

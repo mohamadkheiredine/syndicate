@@ -38,6 +38,6 @@ class SyndicateFamily extends Model
 
     public function getMainImageAttribute($value)
     {
-        return $value ? FilesHelper::getImageFullUrl('syndicate-family/' . $value) : null;
+        return $value ? FilesHelper::getImageFullUrl('syndicate_family/' . $value) : null;
     }
 }

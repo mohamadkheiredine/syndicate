@@ -1,12 +1,11 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-use App;
-use App\Helpers\OneSignalHelper;
 use App\Http\Controllers\Controller;
 use App\Models\PushInbox;
 use App\Models\UserPush;
 use App\Models\UserPushInbox;
+use App\Models\UsersPush;
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Http\Request;
@@ -14,11 +13,11 @@ use Illuminate\Support\Facades\Validator;
 
 class PushController extends Controller
 {
-	/*
-	* Set Player ID
-	*/
+
 	public function set_player_id(Request $request)
 	{
+		$user = Auth::guard('api')->user();
+
 		$validator = Validator::make($request->all(), [
 			'player_id' => 'required'
 		]);
@@ -27,41 +26,58 @@ class PushController extends Controller
 			return parent::return_error('Missing parameter(s)', 400, $validator->messages()->all()[0]);
 		}
 
-		// Player ID Validation
-		if(!OneSignalHelper::validate_player_id($request->player_id)){
-			return parent::return_error('Invalid Player ID', 401, 'Invalid parameters');
-		}
-
-		// Get User
-		$user = Auth::guard('api')->user();
-
-		// Get OneSignal user details
-		$user_onesignal = OneSignalHelper::oneSignalViewUser($request->player_id);
-
-		if($user_push = UserPush::where('user_id', $user->id)->first()){
-			// Store the new player_id
-			$user_push->update([
-				'player_id' => $request->player_id,
-				'device_model' => isset($user_onesignal['error']) ? null : $user_onesignal['device_model'],
-				'device_type' => isset($user_onesignal['error']) ? null : $user_onesignal['device_type'],
-				'identifier' => isset($user_onesignal['error']) ? null : $user_onesignal['identifier'],
-				'response' => isset($user_onesignal['error']) ? $user_onesignal['error'] : json_encode($user_onesignal),
-				'language' => App::getLocale()
-			]);
+		if($user_push = UsersPush::where('user_id', $user->id)->first()){
+			$user_push->player_id = $request->player_id;
+			$user_push->save();
 		} else {
-			// Create new user player_id
-			UserPush::create([
+			UsersPush::create([
 				'user_id' => $user->id,
-				'player_id' => $request->player_id,
-				'device_model' => isset($user_onesignal['error']) ? null : $user_onesignal['device_model'],
-				'device_type' => isset($user_onesignal['error']) ? null : $user_onesignal['device_type'],
-				'identifier' => isset($user_onesignal['error']) ? null : $user_onesignal['identifier'],
-				'response' => isset($user_onesignal['error']) ? $user_onesignal['error'] : json_encode($user_onesignal),
-				'language' => App::getLocale()
+				'player_id' => $request->player_id
 			]);
 		}
 
-		return parent::return_success(['message' => 'Your request has been submitted successfully']);
+		// Exact old typo, preserved deliberately.
+		return parent::return_success(['message' => 'Submited successfully!']);
+	}
+
+
+	public function syndicateSetUserPush(Request $request)
+	{
+
+		if(!$request->bearerToken()){
+
+			$user_push = UserPush::create([
+				'registration_id' => $request->push_token
+			]);
+
+			return response(['id' => $user_push->id], 200);
+		}
+
+		if(!$user = Auth::guard('api')->user()){
+			return parent::return_error('Invalid Access Token', 101, 'messages.invalid_access_token');
+		}
+
+		if(!$request->has('push_token')){
+			return parent::return_error('Push Token required!', 400, 'messages.missing_parameter');
+		}
+		if(!$request->has('push_id')){
+			return parent::return_error('Push ID required!', 400, 'messages.missing_parameter');
+		}
+
+		$user_push = UserPush::find($request->push_id);
+
+		if($user_push){
+			$user_push->users_id = $user->id;
+			$user_push->registration_id = $request->push_token;
+			$user_push->save();
+		}else{
+			$user_push = UserPush::create([
+				'registration_id' => $request->push_token,
+				'users_id' => $user->id
+			]);
+		}
+
+		return response(['id' => $user_push->id], 200);
 	}
 
 	/*

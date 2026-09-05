@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\SyndicateUser;
+use App\Models\UserPush;
 use App\Helpers\FilesHelper;
 use App\Mail\RegistrationActivation;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -68,38 +70,23 @@ class LoginController extends Controller
         return parent::return_success($response);
     }
 
-	/**
-	 * Syndicate member login (email + password) - ports the old CMS's
-	 * LoginController@login to SyndicateUser + Sanctum tokens instead of
-	 * the old hand-rolled users_access table. Reuses verifyPassword()
-	 * (bcrypt-first, legacy-MD5 fallback) already used by the website login.
-	 *
-	 */
-	public function syndicateLogin(Request $request)
+    public function syndicateLogin(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+        app()->setLocale('en');
 
-        if ($validator->fails()) {
-            return parent::return_error('Missing parameter(s)', 401, $validator->messages()->all()[0]);
+        if (!$request->filled('email')) {
+            return parent::return_error('Missing Email', 401, 'messages.missing_parameter');
+        }
+        if (!$request->filled('password')) {
+            return parent::return_error('Missing Password', 401, 'messages.missing_parameter');
         }
 
         $user = SyndicateUser::where('email', $request->email)->first();
 
-        // Same generic error for "no user" and "bad password" - avoids leaking
-        // which emails are registered (matches old CMS behavior).
         if (!$user || !$user->verifyPassword($request->password)) {
-            return parent::return_error('Invalid credentials', 401, 'messages.invalid_credentials');
+            return parent::return_error('User does not exist', 404, 'messages.invalid_credentials');
         }
 
-        if ($user->activation_code !== 'activated') {
-            return parent::return_error('Account locked', 410, 'messages.account_locked');
-        }
-
-        // Wipe any previous tokens - same intent as the old CMS deleting
-        // prior users_access rows on every fresh login.
         $user->tokens()->delete();
 
         $response = $user->toArray();
@@ -109,96 +96,160 @@ class LoginController extends Controller
     }
 
 
-    /**
-     * Syndicate member self-registration - ports the old CMS's
-     * LoginController@register (same fields: mobile_number, first_name,
-     * last_name, email restricted to the Alfa/Touch domains, blood_type,
-     * password, optional photo).
-     *
-     * Unlike the old mobile API (which activated the account immediately),
-     * this goes through the same activation_code email-gate as the website
-     * registration - one single activation mechanism app-wide, so a mobile
-     * signup can't bypass admin/activation-link approval. No token is
-     * returned here; the client must call /login after the user activates.
-     *
-     */
     public function syndicateRegister(Request $request)
     {
-        $domain_to_company = [
-            'alfamobile.com.lb' => 'Alfa',
-            'touch.com.lb' => 'Touch',
-        ];
+        app()->setLocale('en');
+
+        $allowed_domains = ['alfamobile.com.lb', 'touch.com.lb'];
 
         $validator = Validator::make($request->all(), [
-            'mobile_number' => 'required|string|max:255',
-            'first_name'    => 'required|string|max:255',
-            'last_name'     => 'required|string|max:255',
+            'mobile_number' => 'required',
+            'first_name'    => 'required',
+            'last_name'     => 'required',
             'email'         => [
+                'bail',
                 'required',
-                'email',
-                'max:255',
-                'unique:syndicate_user,email',
-                function ($attribute, $value, $fail) use ($domain_to_company) {
-                    $domain = strtolower(substr(strrchr($value, '@'), 1));
-                    if (!array_key_exists($domain, $domain_to_company)) {
-                        $fail('Email domain is not allowed.');
+                'email:filter', // old uses PHP filter_var, not RFC/DNS
+                function ($attribute, $value, $fail) use ($allowed_domains) {
+                    $domain = substr(strrchr((string) $value, '@'), 1);
+                    if (!in_array($domain, $allowed_domains, true)) {
+                        $fail('Invalid Email Domain');
                     }
                 },
             ],
-            'blood_type' => 'required|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
-            'password'   => 'required|min:6',
-            'image'      => 'nullable|image|max:5120',
+            'blood_type' => 'required',
+            'password'   => 'required',
         ]);
 
         if ($validator->fails()) {
-            return parent::return_error('Missing parameter(s)', 401, $validator->messages()->all()[0]);
+            $failed = $validator->failed();
+            $map = [
+                ['mobile_number', 'Required', 'Missing Mobile Number', 401, 'messages.missing_parameter'],
+                ['first_name',    'Required', 'Missing First Name',    401, 'messages.missing_parameter'],
+                ['last_name',     'Required', 'Missing Last Name',     401, 'messages.missing_parameter'],
+                ['email',         'Required', 'Missing Email',         401, 'messages.missing_parameter'],
+                ['blood_type',    'Required', 'Missing Blood Type',    401, 'messages.missing_parameter'],
+                ['email',         'Email',    'Invalid Email',         402, 'messages.invalid_parameters'],
+                ['email', \Illuminate\Validation\ClosureValidationRule::class, 'Invalid Email Domain', 402, 'messages.invalid_parameters'],
+                ['password',      'Required', 'Missing Password',      401, 'messages.missing_parameter'],
+            ];
+            foreach ($map as [$field, $rule, $debugger, $code, $key]) {
+                if (isset($failed[$field][$rule])) {
+                    return parent::return_error($debugger, $code, $key);
+                }
+            }
+
+            return parent::return_error(
+                $validator->errors()->first(),
+                401,
+                'messages.missing_parameter'
+            );
         }
 
-        $domain = strtolower(substr(strrchr($request->email, '@'), 1));
+        $user = SyndicateUser::where('email', $request->email)->first();
+        if (!$user) {
+            return parent::return_error('Syndicate User does not exist!', 403, 'messages.registration_error');
+        }
 
-        $photo = $request->hasFile('image') ? FilesHelper::storeFile('syndicate-users', $request->file('image')) : '';
+        if ($user->getAttributes()['activation_code'] === 'activated') {
+            return parent::return_error(
+                __('messages.account_already_registered'),
+                423,
+                'messages.account_already_registered'
+            );
+        }
 
-        $user = SyndicateUser::create([
-            'mobile_number' => $request->mobile_number,
-            'first_name'    => $request->first_name,
-            'fathers_name'  => '',
-            'last_name'     => $request->last_name,
-            'email'         => $request->email,
-            'company'       => $domain_to_company[$domain],
-            'blood_type'    => $request->blood_type,
-            'password'      => $request->password,
-            'photo'         => $photo,
-            'lang'          => 'en',
+        $photo = $user->getAttributes()['photo'];
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $photo = FilesHelper::storeFile('user', $request->file('image'));
+        }
+
+        $activationCode = Str::random(64);
+
+        $user->update([
+            'first_name'      => $request->first_name,
+            'last_name'       => $request->last_name,
+            'mobile_number'   => $request->mobile_number,
+            'blood_type'      => $request->blood_type,
+            'password'        => $request->password,
+            'photo'           => $photo,
+            'activation_code' => $activationCode,
+            'lang'            => 'en',
         ]);
 
-        $activationUrl = route('web.activate-account', ['user_id' => base64_encode($user->id)]);
-
-        // A missing/invalid mail configuration should never break the
-        // registration itself - the account above already exists regardless.
+        $activationUrl = url('/api/activate/' . $activationCode);
         try {
-            Mail::to($user->email)->send(new RegistrationActivation($user->first_name, $activationUrl));
+            Mail::to($user->email)->send(
+                new RegistrationActivation($user->first_name, $user->last_name, $activationUrl)
+            );
         } catch (\Throwable $e) {
-            Log::warning('Registration activation email failed to send: ' . $e->getMessage());
+            Log::warning('Syndicate registration activation email failed: ' . $e->getMessage());
         }
 
-        return parent::return_success([
-            'message' => 'You have completed the registration. Please activate your account through the activation link sent to your email.',
-        ]);
+        return parent::return_success(['status' => __('messages.email_sent_success')]);
     }
+
 
     /**
-     * Revokes the caller's current Sanctum token and clears their push
-     * tokens - the modern equivalent of the old CMS deleting the matching
-     * users_access and user_push rows on logout.
+     * Emailed activation link - ports old Api\LoginController@activate.
+     * Old looked the member up by the random activation_code string it
+     * emailed at registration (Users::whereActivationCode), then flipped
+     * that column to the literal 'activated'. Same here. Returns the same
+     * plain-text strings old did (not JSON) so an existing client that
+     * just shows the body keeps working.
+     *
+     * NOTE: old also had a "User Already Activated" branch that fired when
+     * the member had already obtained an access token. After activation
+     * the code column no longer holds the emailed value, so a second click
+     * of the same link now lands on 'User Not Found!' instead - the link
+     * is single-use either way.
      */
-    public function syndicateLogout()
+    public function activate($token)
     {
-        $user = Auth::guard('sanctum')->user();
+        $user = $token !== 'activated'
+            ? SyndicateUser::where('activation_code', $token)->first()
+            : null;
 
-        $user->currentAccessToken()->delete();
-        $user->pushTokens()->delete();
+        if (!$user) {
+            return 'User Not Found!';
+        }
 
-        return parent::return_success(['status' => 'Logged out successfully']);
+        if ($user->getAttributes()['activation_code'] === 'activated') {
+            return 'User Already Activated';
+        }
+
+        $user->update(['activation_code' => 'activated']);
+
+        return 'Email Activated';
     }
+
+    public function syndicateLogout(Request $request)
+    {
+        $user = Auth::guard('api')->user();
+
+        $user->tokens()->delete();
+        UserPush::where('users_id', $user->id)->delete();
+
+        return parent::return_success(['status' => __('messages.logout_success')]);
+    }
+
+    public function syndicateDeleteAccount(Request $request)
+    {
+        $user = Auth::guard('api')->user();
+
+        if (!$request->filled('password')) {
+            return parent::return_error('Missing Password', 401, 'messages.missing_parameter');
+        }
+
+        if (!$user->verifyPassword($request->password)) {
+            return parent::return_error('Incorrect password', 401, 'Incorrect password');
+        }
+
+        $user->tokens()->delete();
+        $user->delete();
+
+        return parent::return_success(['status' => 'Account deleted']);
+    }
+
 
 }

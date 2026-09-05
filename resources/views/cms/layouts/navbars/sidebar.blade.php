@@ -82,6 +82,7 @@
                     </a>
                 </li>
                 @endcan
+                @canany(['roles-view', 'permissions-view'])
                 <li class="nav-item">
                     <a class="nav-link" href="#roles-permissions" data-toggle="collapse" role="button" aria-expanded="{{ Route::is('admin.roles.*') || Route::is('admin.permissions.*') ? 'true' : 'false' }}" aria-controls="roles-permissions">
                         <i class="fas fa-user-shield text-primary"></i>
@@ -105,7 +106,8 @@
                             @endcan
                         </ul>
                     </div>
-                </li> 
+                </li>
+                @endcanany
             </ul>
 
             <hr class="my-3">

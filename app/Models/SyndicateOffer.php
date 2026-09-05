@@ -67,7 +67,7 @@ class SyndicateOffer extends Model
 
     public function getPdfAttribute($value)
     {
-        return $value ? FilesHelper::getImageFullUrl('offers-files/' . $value) : null;
+        return $value ? FilesHelper::getImageFullUrl('offers/' . $value) : null;
     }
 
     // Old CMS ran rich-text through htmlspecialchars() before saving, so
@@ -93,6 +93,6 @@ class SyndicateOffer extends Model
     {
         $raw = $this->getAttributes();
 
-        return FilesHelper::getDisplayImageUrl('offers', $raw['main_image'], $raw['publish_main_image'], $raw['publish_status']);
+        return FilesHelper::getDisplayImageUrl('offers', $raw['main_image'], $raw['publish_main_image'], $raw['publish_status'], 'publish_offers');
     }
 }

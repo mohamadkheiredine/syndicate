@@ -27,46 +27,38 @@ class ProfileController extends Controller
         ]);
     }
 
-    /**
-     * Syndicate member profile - ports the old CMS's ProfileController@get.
-     *
-     */
-    public function syndicateProfile()
+
+    public function syndicateProfile(Request $request)
     {
-        $user = Auth::guard('sanctum')->user();
+        $user = Auth::guard('api')->user();
 
         return parent::return_success($this->formatUser($user));
     }
 
-    /**
-     * Update profile - ports the old CMS's ProfileController@set (same
-     * required fields: mobile_number, first_name, last_name, blood_type,
-     * optional image), photo storage routed through FilesHelper instead of
-     * a raw public_path() move.
-     *
-     */
+
     public function syndicateProfileUpdate(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'mobile_number' => 'required|string|max:255',
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'blood_type' => 'required|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
-            'image' => 'nullable|image|max:5120',
-        ]);
+        $user = Auth::guard('api')->user();
 
-        if ($validator->fails()) {
-            return parent::return_error('Missing parameter(s)', 401, $validator->messages()->all()[0]);
+        if (!$request->filled('mobile_number')) {
+            return parent::return_error('Missing Mobile Number', 401, 'messages.missing_parameter');
         }
-
-        $user = Auth::guard('sanctum')->user();
+        if (!$request->filled('first_name')) {
+            return parent::return_error('Missing First Name', 401, 'messages.missing_parameter');
+        }
+        if (!$request->filled('last_name')) {
+            return parent::return_error('Missing Last Name', 401, 'messages.missing_parameter');
+        }
+        if (!$request->filled('blood_type')) {
+            return parent::return_error('Missing Blood Type', 401, 'messages.missing_parameter');
+        }
 
         $photo = $user->getAttributes()['photo'];
         if ($request->hasFile('image')) {
             if ($photo) {
-                FilesHelper::deleteFileByName('syndicate-users', $photo);
+                FilesHelper::deleteFileByName('user', $photo);
             }
-            $photo = FilesHelper::storeFile('syndicate-users', $request->file('image'));
+            $photo = FilesHelper::storeFile('user', $request->file('image'));
         }
 
         $user->update([
@@ -80,78 +72,71 @@ class ProfileController extends Controller
         return parent::return_success($this->formatUser($user->fresh()));
     }
 
-    /**
-     * Payment/expenses summary - ports the old CMS's
-     * ProfileController@get_expences. Reuses the same due-amount formula
-     * already established in MemberPaymentController::calculateDueAmount()
-     * (sum paid per year vs the configured rate per year) rather than the
-     * old mobile API's own version, which filtered user_expences by
-     * `status = 1` as an integer - on this table status is an
-     * enum('0','1') column, so an integer comparison silently matches the
-     * enum's internal index instead of the value (the same bug class this
-     * project has hit and fixed before). The already-verified CMS version
-     * doesn't filter by status at all, so that's what this reuses.
-     *
-     */
-    public function syndicateProfileExpenses()
+
+    public function syndicateProfileExpenses(Request $request)
     {
-        $user = Auth::guard('sanctum')->user();
+        $user = Auth::guard('api')->user();
 
         $creationYear = (int) $user->created_at->format('Y');
         $currentYear = (int) date('Y');
 
-        $paidByYear = MemberPayment::where('user_id', $user->id)
-            ->where('ue_year', '>=', $creationYear)
-            ->selectRaw('ue_year, SUM(amount) as total')
-            ->groupBy('ue_year')
-            ->pluck('total', 'ue_year');
+        $rates = SyndicatePayment::pluck('payment_amount', 'payment_year');
 
-        $rates = SyndicatePayment::whereBetween('payment_year', [$creationYear, $currentYear])
-            ->pluck('payment_amount', 'payment_year');
+        $paidYears = MemberPayment::where('user_id', $user->id)->pluck('ue_year')->toArray();
 
-        $duePayments = [];
+        $result = [];
+
         for ($year = $creationYear; $year <= $currentYear; $year++) {
-            $expected = $rates[$year] ?? 0;
-            $paid = $paidByYear[$year] ?? 0;
-            $due = max($expected - $paid, 0);
-            if ($due > 0) {
-                $duePayments[] = ['year' => $year, 'payment' => $due];
+            if (!in_array($year, $paidYears)) {
+                $result['due_payments'][] = [
+                    'year' => $year,
+                    'payment' => $rates[$year] ?? 0,
+                ];
             }
         }
 
-        $lastPayment = MemberPayment::where('user_id', $user->id)
-            ->orderByDesc('ue_year')
-            ->orderByDesc('created_at')
-            ->first();
+        $futurePayments = SyndicatePayment::where('payment_year', '>', $creationYear + 1)
+            ->whereNotIn('payment_year', $paidYears)
+            ->get();
 
-        return parent::return_success([
-            'due_payments' => $duePayments,
-            'message' => null,
-            'last_payment' => [
-                'year' => $lastPayment->ue_year ?? 0,
-                'amount' => $lastPayment->amount ?? 0,
-            ],
-        ]);
-    }
-
-    /**
-     * Change password - ports the old CMS's ProfileController@changePassword.
-     * Old password check reuses verifyPassword() (bcrypt-first, legacy-MD5
-     * fallback) instead of a raw md5() comparison.
-     *
-     */
-    public function syndicateChangePassword(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'old_password' => 'required',
-            'new_password' => 'required|min:6',
-        ]);
-
-        if ($validator->fails()) {
-            return parent::return_error('Missing parameter(s)', 401, $validator->messages()->all()[0]);
+        foreach ($futurePayments as $payment) {
+            $result['future_payments'][] = [
+                'year' => $payment->payment_year,
+                'payment' => $payment->payment_amount,
+            ];
         }
 
-        $user = Auth::guard('sanctum')->user();
+        $lastPayment = MemberPayment::where('user_id', $user->id)
+            ->orderBy('ue_year')
+            ->orderBy('created_at')
+            ->get()
+            ->last();
+
+        $lastPaymentYear = $lastPayment->ue_year ?? 0;
+        $lastPaymentAmount = $lastPayment->amount ?? 0;
+
+        $result['message'] = ($lastPaymentYear == $currentYear)
+            ? 'You paid all your expences. Thank you.'
+            : null;
+        $result['last_payment'] = [
+            'year' => $lastPaymentYear,
+            'amount' => $lastPaymentAmount,
+        ];
+
+        return parent::return_success($result);
+    }
+
+
+    public function syndicateChangePassword(Request $request)
+    {
+        $user = Auth::guard('api')->user();
+
+        if (!$request->filled('old_password')) {
+            return parent::return_error('Missing Old Password', 401, 'messages.missing_parameter');
+        }
+        if (!$request->filled('new_password')) {
+            return parent::return_error('Missing New Password', 401, 'messages.missing_parameter');
+        }
 
         if (!$user->verifyPassword($request->old_password)) {
             return parent::return_error('Wrong Password!', 405, 'messages.wrong_password');
@@ -163,19 +148,14 @@ class ProfileController extends Controller
         return parent::return_success($this->formatUser($user));
     }
 
-    /**
-     * Send a password reset code by email - ports the old CMS's
-     * ProfileController@sendPasswordCode.
-     *
-     */
+
     public function syndicateForgotPassword(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-        ]);
-
-        if ($validator->fails()) {
-            return parent::return_error('Missing parameter(s)', 401, $validator->messages()->all()[0]);
+        if (!$request->filled('email')) {
+            return parent::return_error('Missing Email', 401, 'messages.missing_parameter');
+        }
+        if (!filter_var($request->email, FILTER_VALIDATE_EMAIL)) {
+            return parent::return_error('Invalid Email', 402, 'messages.invalid_parameter');
         }
 
         $user = SyndicateUser::where('email', $request->email)->first();
@@ -189,28 +169,24 @@ class ProfileController extends Controller
         $user->save();
 
         try {
-            Mail::to($user->email)->send(new PasswordResetCode($user->first_name, $code));
+            Mail::to($user->email)->send(new PasswordResetCode($user->first_name, $user->last_name, $user->email, $code));
         } catch (\Throwable $e) {
             Log::warning('Password reset code email failed to send: ' . $e->getMessage());
         }
 
-        return parent::return_success(['status' => 'An email has been sent with your reset code.']);
+        return parent::return_success(['status' => __('messages.email_sent_success')]);
     }
 
-    /**
-     * Reset password using the emailed code - ports the old CMS's
-     * ProfileController@reset_password.
-     *
-     */
+
     public function syndicateResetPassword(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'reset_code' => 'required',
-            'new_password' => 'required|min:6',
+            'new_password' => 'required|confirmed',
         ]);
 
         if ($validator->fails()) {
-            return parent::return_error('Missing parameter(s)', 401, $validator->messages()->all()[0]);
+            return parent::return_error($validator->errors()->first(), 401, 'Invalid Parameters');
         }
 
         $user = SyndicateUser::where('reset_code', $request->reset_code)->first();
@@ -220,11 +196,10 @@ class ProfileController extends Controller
         }
 
         $user->password = $request->new_password;
-        // NOT NULL with no DB default - clear to '' (same pattern used
-        // elsewhere on this model), not null.
+
         $user->reset_code = '';
         $user->save();
 
-        return parent::return_success(['status' => 'Your password has been changed successfully.']);
+        return parent::return_success(['status' => __('messages.password_changed_success')]);
     }
 }

@@ -81,15 +81,16 @@ class OneSignalHelper
         if(isset($info['big_picture'])){
             $fields['big_picture'] = $info['big_picture'];
         }
-        if(isset($info['ios_attachments'])){
-            $fields['ios_attachments'] = $info['ios_attachments'];
-        }
+        // iOS home-screen badge count. Old set these into $info but never
+        // forwarded them to OneSignal, so the badge dropdown did nothing.
+        // Now sent through: ios_badgeType is None/SetTo/Increase,
+        // ios_badgeCount is the number to set / add (negative subtracts).
         if(isset($info['ios_badgeType'])){
             $fields['ios_badgeType'] = $info['ios_badgeType'];
+            $fields['ios_badgeCount'] = (int) ($info['ios_badgeCount'] ?? 0);
         }
-        if(isset($info['ios_badgeCount'])){
-            $fields['ios_badgeCount'] = $info['ios_badgeCount'];
-        }
+        // ios_attachments is still not forwarded - old never sent it and
+        // the CMS form has no field for it.
         $fields = json_encode($fields);
         try{
             $ch = curl_init();

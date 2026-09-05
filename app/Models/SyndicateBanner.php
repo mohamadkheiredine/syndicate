@@ -25,6 +25,6 @@ class SyndicateBanner extends Model
 
     public function getMainImageAttribute($value)
     {
-        return $value ? FilesHelper::getImageFullUrl('banners/' . $value) : null;
+        return $value ? FilesHelper::getImageFullUrl('banner/' . $value) : null;
     }
 }

@@ -85,7 +85,7 @@ class SyndicateOthersAdvertisementController extends Controller
 
         SyndicateOthersAdvertisement::create([
             'admin_id' => Auth::guard('admin')->user()->id,
-            'main_image' => FilesHelper::storeFile('syndicate-others-advertisement', $request->file('main_image')),
+            'main_image' => FilesHelper::storeFile('others_advertisement', $request->file('main_image')),
             'position' => $request->position,
             'status' => $published ? '1' : '0',
             'publish_status' => $published ? '1' : '0',
@@ -130,9 +130,9 @@ class SyndicateOthersAdvertisementController extends Controller
         $image = $row->getAttributes()['main_image'];
         if ($request->hasFile('main_image')) {
             if ($image) {
-                FilesHelper::deleteFileByName('syndicate-others-advertisement', $image);
+                FilesHelper::deleteFileByName('others_advertisement', $image);
             }
-            $image = FilesHelper::storeFile('syndicate-others-advertisement', $request->file('main_image'));
+            $image = FilesHelper::storeFile('others_advertisement', $request->file('main_image'));
         }
 
         $row->update([
@@ -173,7 +173,7 @@ class SyndicateOthersAdvertisementController extends Controller
         $row = SyndicateOthersAdvertisement::findOrFail($id);
 
         if ($row->getAttributes()['main_image']) {
-            FilesHelper::deleteFileByName('syndicate-others-advertisement', $row->getAttributes()['main_image']);
+            FilesHelper::deleteFileByName('others_advertisement', $row->getAttributes()['main_image']);
         }
 
         $row->delete();

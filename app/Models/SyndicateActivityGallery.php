@@ -20,7 +20,7 @@ class SyndicateActivityGallery extends Model
 
     public function getGalleryImageAttribute($value)
     {
-        return $value ? FilesHelper::getImageFullUrl('activities-gallery/' . $value) : null;
+        return $value ? FilesHelper::getImageFullUrl('activity_gallery/' . $value) : null;
     }
 
     public function activity()

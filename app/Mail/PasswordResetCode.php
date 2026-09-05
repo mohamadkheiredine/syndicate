@@ -16,18 +16,19 @@ class PasswordResetCode extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public string $firstName, public string $code)
+    public function __construct(public string $firstName, public string $lastName, public string $email, public string $code)
     {
         //
     }
 
     /**
-     * Get the message envelope.
+     * Get the message envelope. Matches old's real subject exactly - the
+     * old code's Mail::send() closure hardcodes "Syndicate" here.
      */
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Syndicate TEAM - Password Reset',
+            subject: 'Syndicate',
         );
     }
 
@@ -40,6 +41,8 @@ class PasswordResetCode extends Mailable
             view: 'emails.password-reset-code',
             with: [
                 'firstName' => $this->firstName,
+                'lastName' => $this->lastName,
+                'email' => $this->email,
                 'code' => $this->code,
             ],
         );

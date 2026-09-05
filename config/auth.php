@@ -50,7 +50,7 @@ return [
         ],
         'api' => [
             'driver' => 'sanctum',
-            'provider' => 'users',
+            'provider' => 'syndicate_users',
         ],
     ],
 

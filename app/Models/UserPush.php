@@ -16,6 +16,7 @@ class UserPush extends Model
     protected $fillable = [
         'users_id',
         'registration_id',
+        'language_id',
     ];
 
     /*

@@ -91,17 +91,17 @@ class ProfileController extends Controller
         $photo = $user->getAttributes()['photo'];
         if($request->hasFile('photo')){
             if($photo){
-                FilesHelper::deleteFileByName('syndicate-users', $photo);
+                FilesHelper::deleteFileByName('user', $photo);
             }
-            $photo = FilesHelper::storeFile('syndicate-users', $request->file('photo'));
+            $photo = FilesHelper::storeFile('user', $request->file('photo'));
         }
 
         $anyFile = $user->getAttributes()['any_file'];
         if($request->hasFile('any_file')){
             if($anyFile){
-                FilesHelper::deleteFileByName('syndicate-users', $anyFile);
+                FilesHelper::deleteFileByName('upload_file', $anyFile);
             }
-            $anyFile = FilesHelper::storeFile('syndicate-users', $request->file('any_file'));
+            $anyFile = FilesHelper::storeFile('upload_file', $request->file('any_file'));
         }
 
         $updateData = [

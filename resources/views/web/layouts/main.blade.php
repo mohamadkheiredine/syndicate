@@ -45,6 +45,9 @@
 	@stack('stylesheets')
 	{{-- Main CSS --}}
 	<link rel="stylesheet" type="text/css" href="{{ asset('assets-web/css/main.css') }}?v={{ env('CSS_MAIN') }}"/>
+	{{-- Sidebar ad-slot carousels (right-panel.blade.php) - required by the scrollerota plugin --}}
+	<link rel="stylesheet" type="text/css" href="{{ asset('assets-web/css/slider-right.css') }}"/>
+	<link rel="stylesheet" type="text/css" href="{{ asset('assets-web/css/slider-right-down.css') }}"/>
 </head>
 <body oncontextmenu="return false">
 	{{-- Navbar --}}
@@ -66,6 +69,10 @@
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 	@endif
+	{{-- jQuery UI - needed for the sidebar carousel's easeInOutQuart easing
+	(old's includes/right-panel.php loaded this directly; without it the
+	scrollerota plugins fail silently on their easing call) --}}
+	<script type="text/javascript" src="{{ asset('assets-web/libraries/jquery-ui/jquery-ui.min.js') }}"></script>
 	{{-- Pushed Scripts --}}
 	@stack('scripts')
 	{{-- Main JS --}}

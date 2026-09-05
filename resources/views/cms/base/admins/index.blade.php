@@ -56,8 +56,8 @@
                                         <td class="adjust-element">
                                             {{-- Admin can not block himself --}}
                                             @if (Auth::guard('admin')->user()->id != $row->id)
-                                                {{-- All other Roles can not block: Developer --}}
-                                                @if (!$row->hasRole('Developer'))
+                                                {{-- All other Roles can not block: developer or super-admin --}}
+                                                @if (!$row->hasRole('developer') && !$row->hasRole('super-admin'))
                                                     <label class="custom-toggle mb-0">
                                                     <input onclick="block({{$row->id}})" class="block-js" type="checkbox" value="{{ $row->id }}" @if($row->blocked) {{ "checked" }} @endif>
                                                         <span class="custom-toggle-slider rounded-circle"></span>
@@ -78,8 +78,8 @@
                                                 @can('admins-edit')
                                                     {{-- Admin can not edit himself redirect to profile page --}}
                                                     @if (Auth::guard('admin')->user()->id != $row->id)
-                                                        {{-- All other Roles can not edit: Developer --}}
-                                                        @if (!$row->hasRole('Developer'))
+                                                        {{-- All other Roles can not edit: developer or super-admin --}}
+                                                        @if (!$row->hasRole('developer') && !$row->hasRole('super-admin'))
                                                             <a class="dropdown-item"
                                                                 href="{{ route('admin.' . $page_info['link'] . '.edit', $row) }}">Edit</a>
                                                         @endif
@@ -92,8 +92,8 @@
                                                 @can('admins-delete')
                                                     {{-- Admin can not delete himself --}}
                                                     @if (Auth::guard('admin')->user()->id != $row->id)
-                                                        {{-- All other Roles can not delete: Developer --}}
-                                                        @if (!$row->hasRole('Developer'))
+                                                        {{-- All other Roles can not delete: developer or super-admin --}}
+                                                        @if (!$row->hasRole('developer') && !$row->hasRole('super-admin'))
                                                             <form
                                                                 action="{{ route('admin.' . $page_info['link'] . '.destroy', $row) }}"
                                                                 method="post">

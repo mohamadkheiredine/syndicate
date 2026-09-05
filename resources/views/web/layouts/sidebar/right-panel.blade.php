@@ -40,11 +40,15 @@
 </aside>
 
 @push('scripts')
-<script type="text/javascript" src="{{ asset('assets-web/libraries/scrollerota/jquery.scrollerota.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('assets-web/libraries/scrollerota/jquery.scrollerotaup.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('assets-web/libraries/scrollerota/jquery.scrollerotadown.min.js') }}"></script>
 <script type="text/javascript">
-    $("#scrollerota").scrollerota();
-    $("#scrollerota_down").scrollerotadown();
+    // Old's own two plugin files default to different timer values (top:
+    // 5000ms, bottom: 4000ms) and old's real init code never overrides
+    // them, so they drift apart over time in old's live site too. Passing
+    // a matching timer here keeps them in sync, per explicit request.
+    $("#scrollerota").scrollerota({ timer: 5000 });
+    $("#scrollerota_down").scrollerotadown({ timer: 5000 });
 
     function subscriber() {
         if (document.getElementById("syndicate_name").value == "") {

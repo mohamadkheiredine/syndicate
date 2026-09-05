@@ -16,41 +16,37 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\PushController;
 use App\Http\Controllers\Api\SettingController;
+use App\Http\Controllers\Api\DocumentController;
+use App\Http\Controllers\Api\SplashSlidersController;
+use App\Http\Controllers\Api\AdSlidersController;
+use App\Http\Controllers\Api\TermsController;
+use App\Http\Controllers\Api\JoinUsController;
+use App\Http\Controllers\Api\PaymentController;
 use Illuminate\Support\Facades\Route;
 
-// AUTHENTICATION
 Route::group(['prefix' => 'user'], function () {
     Route::post('/login', [LoginController::class, 'login']);
     Route::post('/verification', [VerificationController::class, 'verify']);
 });
 
-// SYNDICATE MEMBER AUTHENTICATION
-Route::prefix('syndicate')->group(function () {
-    Route::post('/login', [LoginController::class, 'syndicateLogin']);
-    Route::post('/register', [LoginController::class, 'syndicateRegister']);
+Route::post('login', [LoginController::class, 'syndicateLogin']);
+Route::post('register', [LoginController::class, 'syndicateRegister']);
+Route::get('activate/{token}', [LoginController::class, 'activate']);
 
-    // PROFILE - forgot/reset password don't require a logged-in session,
-    // same as the old CMS
-    Route::prefix('profile')->controller(ProfileController::class)->group(function () {
-        Route::post('/forgot_password', 'syndicateForgotPassword');
-        Route::post('/reset_password', 'syndicateResetPassword');
-    });
-
-    Route::middleware(['auth:sanctum'])->group(function () {
-        Route::post('/logout', [LoginController::class, 'syndicateLogout']);
-
-        Route::prefix('profile')->controller(ProfileController::class)->group(function () {
-            Route::get('/get', 'syndicateProfile');
-            Route::post('/set', 'syndicateProfileUpdate');
-            Route::get('/expences', 'syndicateProfileExpenses');
-            Route::post('/change_password', 'syndicateChangePassword');
-        });
-
-        Route::post('/activities', [ActivitiesController::class, 'index']);
-        Route::get('/offers', [OffersController::class, 'index']);
-        Route::get('/members', [MembersController::class, 'index']);
-    });
+Route::prefix('profile')->controller(ProfileController::class)->group(function () {
+    Route::post('/forgot_password', 'syndicateForgotPassword');
+    Route::post('/reset_password', 'syndicateResetPassword');
 });
+
+
+Route::post('activities', [ActivitiesController::class, 'index']);
+Route::post('activities/search', [ActivitiesController::class, 'search']);
+Route::get('splash-sliders', [SplashSlidersController::class, 'index']);
+Route::get('ad-sliders', [AdSlidersController::class, 'index']);
+Route::post('join_us', [JoinUsController::class, 'index']);
+
+Route::post('payment/return', [PaymentController::class, 'payment_return'])->name('payment-return');
+Route::get('payment/status', [PaymentController::class, 'payment_status'])->name('payment-status');
 
 // COUNTRIES
 Route::get('countries', [CountryController::class, 'index']);
@@ -71,7 +67,7 @@ Route::get('about', [FixedSectionController::class, 'about']);
 Route::get('faqs', [FaqController::class, 'index']);
 
 // TERMS
-Route::get('terms', [FixedSectionController::class, 'terms']);
+Route::get('terms', [TermsController::class, 'index']);
 
 // PRIVACY
 Route::get('privacy', [FixedSectionController::class, 'privacy']);
@@ -82,8 +78,41 @@ Route::get('social-media', [SocialMediaController::class, 'index']);
 // PRIVACY
 Route::get('settings', [SettingController::class, 'index']);
 
+// PUSH - set_user_push works both logged-out (anonymous device
+// registration) and logged-in (Bearer token optional, checked inline),
+// matching old exactly - it can't sit behind route middleware.
+// set_player_id always requires auth in old, so it's in the auth:sanctum
+// group below instead.
+Route::post('push/set_user_push', [PushController::class, 'syndicateSetUserPush']);
+
 // Authenticated routes
 Route::middleware(['auth:sanctum', 'check_user_app'])->group(function () {
+
+    // Flat paths, matching the old API (/api/logout, /api/delete-account).
+    Route::controller(LoginController::class)->group(function () {
+        Route::post('logout', 'syndicateLogout');
+        Route::post('delete-account', 'syndicateDeleteAccount');
+    });
+
+    // GET /api/documents - old required a valid access token for it.
+    Route::get('documents', [DocumentController::class, 'index']);
+
+    Route::post('offers', [OffersController::class, 'index']);
+    Route::post('offers/search', [OffersController::class, 'search']);
+
+    Route::get('members', [MembersController::class, 'index']);
+
+
+    Route::post('payment/view', [PaymentController::class, 'view']);
+
+    Route::post('push/set_player_id', [PushController::class, 'set_player_id']);
+
+    Route::prefix('profile')->controller(ProfileController::class)->group(function () {
+        Route::get('/get', 'syndicateProfile');
+        Route::post('/set', 'syndicateProfileUpdate');
+        Route::get('/expences', 'syndicateProfileExpenses');
+        Route::post('/change_password', 'syndicateChangePassword');
+    });
 
     // USER ROUTES
     Route::prefix('user')->controller(UserController::class)->group(function () {
@@ -109,9 +138,9 @@ Route::middleware(['auth:sanctum', 'check_user_app'])->group(function () {
         Route::post('set-as-default', 'set_as_default');
     });
 
-    // PUSH NOTIFICATION ROUTES
+    // PUSH NOTIFICATION ROUTES (generic scaffold - set-player-id moved to
+    // the syndicate push group above, this one used its own guard/table)
     Route::prefix('push')->controller(PushController::class)->group(function () {
-        Route::post('set-player-id', 'set_player_id');
         Route::post('inbox', 'inbox');
         Route::get('unread-count', 'unreadNotificationsCount');
         Route::post('hide', 'hide');

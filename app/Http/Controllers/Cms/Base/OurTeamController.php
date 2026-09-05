@@ -62,9 +62,9 @@ class OurTeamController extends Controller
         $image = $row->getAttributes()['main_image'];
         if($request->hasFile('main_image')){
             if($image){
-                FilesHelper::deleteFileByName('our-team', $image);
+                FilesHelper::deleteFileByName('our_team', $image);
             }
-            $image = FilesHelper::storeFile('our-team', $request->file('main_image'));
+            $image = FilesHelper::storeFile('our_team', $request->file('main_image'));
         }
 
         $row->update([

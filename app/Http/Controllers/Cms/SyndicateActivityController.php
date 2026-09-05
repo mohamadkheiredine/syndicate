@@ -100,8 +100,8 @@ class SyndicateActivityController extends Controller
             'title' => $request->title,
             'post_date' => $this->parseDate($request->post_date) ?? now()->format('Y-m-d'),
             'place' => $request->place ?? '',
-            'main_image' => $request->hasFile('main_image') ? FilesHelper::storeFile('activities', $request->file('main_image')) : '',
-            'any_file' => $request->hasFile('any_file') ? FilesHelper::storeFile('activities-files', $request->file('any_file')) : '',
+            'main_image' => $request->hasFile('main_image') ? FilesHelper::storeFile('activities_main', $request->file('main_image')) : '',
+            'any_file' => $request->hasFile('any_file') ? FilesHelper::storeFile('activities_file', $request->file('any_file')) : '',
             'short_description' => $request->short_description,
             'description' => $request->description ?? '',
             'status' => $published ? '1' : '0',
@@ -155,17 +155,17 @@ class SyndicateActivityController extends Controller
         $image = $row->getAttributes()['main_image'];
         if($request->hasFile('main_image')){
             if($image){
-                FilesHelper::deleteFileByName('activities', $image);
+                FilesHelper::deleteFileByName('activities_main', $image);
             }
-            $image = FilesHelper::storeFile('activities', $request->file('main_image'));
+            $image = FilesHelper::storeFile('activities_main', $request->file('main_image'));
         }
 
         $file = $row->getAttributes()['any_file'];
         if($request->hasFile('any_file')){
             if($file){
-                FilesHelper::deleteFileByName('activities-files', $file);
+                FilesHelper::deleteFileByName('activities_file', $file);
             }
-            $file = FilesHelper::storeFile('activities-files', $request->file('any_file'));
+            $file = FilesHelper::storeFile('activities_file', $request->file('any_file'));
         }
 
         $row->update([
@@ -204,7 +204,7 @@ class SyndicateActivityController extends Controller
         foreach($request->file('gallery_images') as $galleryImage){
             SyndicateActivityGallery::create([
                 'activities_id' => $row->id,
-                'gallery_image' => FilesHelper::storeFile('activities-gallery', $galleryImage),
+                'gallery_image' => FilesHelper::storeFile('activity_gallery', $galleryImage),
             ]);
         }
     }
@@ -226,7 +226,7 @@ class SyndicateActivityController extends Controller
 
         foreach($galleryRows as $galleryRow){
             if($galleryRow->getAttributes()['gallery_image']){
-                FilesHelper::deleteFileByName('activities-gallery', $galleryRow->getAttributes()['gallery_image']);
+                FilesHelper::deleteFileByName('activity_gallery', $galleryRow->getAttributes()['gallery_image']);
             }
             $galleryRow->delete();
         }
@@ -260,16 +260,16 @@ class SyndicateActivityController extends Controller
         $row = SyndicateActivity::with('gallery')->findOrFail($id);
 
         if($row->getAttributes()['main_image']){
-            FilesHelper::deleteFileByName('activities', $row->getAttributes()['main_image']);
+            FilesHelper::deleteFileByName('activities_main', $row->getAttributes()['main_image']);
         }
 
         if($row->getAttributes()['any_file']){
-            FilesHelper::deleteFileByName('activities-files', $row->getAttributes()['any_file']);
+            FilesHelper::deleteFileByName('activities_file', $row->getAttributes()['any_file']);
         }
 
         foreach($row->gallery as $galleryRow){
             if($galleryRow->getAttributes()['gallery_image']){
-                FilesHelper::deleteFileByName('activities-gallery', $galleryRow->getAttributes()['gallery_image']);
+                FilesHelper::deleteFileByName('activity_gallery', $galleryRow->getAttributes()['gallery_image']);
             }
             $galleryRow->delete();
         }

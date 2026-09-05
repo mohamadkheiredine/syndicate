@@ -56,12 +56,12 @@ class SyndicateActivity extends Model
 
     public function getMainImageAttribute($value)
     {
-        return $value ? FilesHelper::getImageFullUrl('activities/' . $value) : null;
+        return $value ? FilesHelper::getImageFullUrl('activities_main/' . $value) : null;
     }
 
     public function getAnyFileAttribute($value)
     {
-        return $value ? FilesHelper::getImageFullUrl('activities-files/' . $value) : null;
+        return $value ? FilesHelper::getImageFullUrl('activities_file/' . $value) : null;
     }
 
     // Old CMS ran rich-text through htmlspecialchars() before saving, so

@@ -50,7 +50,7 @@ class HomeSlider extends Model
     {
         $raw = $this->getAttributes();
 
-        return FilesHelper::getDisplayImageUrl('home-slider', $raw['main_image'], $raw['publish_main_image'], $raw['publish_status']);
+        return FilesHelper::getDisplayImageUrl('home-slider', $raw['main_image'], $raw['publish_main_image'], $raw['publish_status'], 'publish_home_slider');
     }
 
     public function getDisplayMobileImageAttribute()

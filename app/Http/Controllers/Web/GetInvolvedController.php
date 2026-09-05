@@ -111,8 +111,8 @@ class GetInvolvedController extends Controller
             $linkedin = $request->linkedin_both;
         }
 
-        $photo = FilesHelper::storeFile('syndicate-users', $request->file('photo'));
-        $anyFile = $request->hasFile('any_file') ? FilesHelper::storeFile('syndicate-users', $request->file('any_file')) : '';
+        $photo = FilesHelper::storeFile('user', $request->file('photo'));
+        $anyFile = $request->hasFile('any_file') ? FilesHelper::storeFile('upload_file', $request->file('any_file')) : '';
 
         $user = SyndicateUser::create([
             'first_name' => $request->first_name,
@@ -139,7 +139,7 @@ class GetInvolvedController extends Controller
         // A missing/invalid mail configuration should never break the
         // registration itself - the account above already exists regardless.
         try {
-            Mail::to($user->email)->send(new RegistrationActivation($user->first_name, $activationUrl));
+            Mail::to($user->email)->send(new RegistrationActivation($user->first_name, $user->last_name, $activationUrl));
         } catch (\Throwable $e) {
             Log::warning('Registration activation email failed to send: ' . $e->getMessage());
         }

@@ -1,0 +1,90 @@
+* {
+	outline: none;
+	}
+
+#scrollerota {
+	width: 300px;
+	height: 200px;
+	overflow: hidden;
+	position: relative;
+	}
+
+	#scrollerota ul.text {
+		list-style: none;
+		width: 200px;
+		background: url(../images/pixel.png);
+		position: absolute;
+		top: 0;
+		left: 0;
+		padding: 0;
+		margin: 0;
+		color: #fff;
+		font-size: 14px;
+		line-height: 20px;
+		display:none;
+		}
+		
+		#scrollerota ul.text li {
+			overflow: hidden;
+			}
+
+	#scrollerota a.readmore {
+		background: #666;
+		border: 1px solid #777;
+		padding: 5px 0;
+		text-align: center;
+		color: #fff;
+		clear: both;
+		display: block;
+		width: 80px;
+		margin-top: 16px;
+		text-decoration: none;
+		font-size: 12px;
+		line-height: 17px;
+		}
+		
+	#scrollerota a:hover.readmore {
+		background: #888;
+		border: 1px solid #999;
+		text-decoration: none;
+		}
+		
+	#scrollerota ul.images {
+		list-style: none;
+		position: absolute;
+		top: 0;
+		left: 0;
+		padding: 0;
+		margin: 0;
+		}
+		
+		#scrollerota ul.images li {
+			float: left;
+			}
+						
+	#scrollerota .controls {
+		position: absolute;
+		bottom: 10px;
+		right: 10px;
+		}
+		
+		#scrollerota .controls a {
+			width: 22px;
+			height: 22px;
+			display: block;
+			float: left;
+			background: url(../images/controls.png) no-repeat;
+			}
+	
+		#scrollerota .controls .prev {
+			background-position: 0 -22px;
+			}
+	
+		#scrollerota .controls .next {
+			background-position: -23px -22px;
+			}
+			
+		#scrollerota .controls .play {
+			background-position: -23px 0;
+			display: none;
+			}	

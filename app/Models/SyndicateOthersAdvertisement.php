@@ -43,7 +43,7 @@ class SyndicateOthersAdvertisement extends Model
 
     public function getMainImageAttribute($value)
     {
-        return $value ? FilesHelper::getImageFullUrl('syndicate-others-advertisement/' . $value) : null;
+        return $value ? FilesHelper::getImageFullUrl('others_advertisement/' . $value) : null;
     }
 
     // Used by the public sidebar - shows the pending (publish_main_image)
@@ -52,7 +52,7 @@ class SyndicateOthersAdvertisement extends Model
     {
         $raw = $this->getAttributes();
 
-        return FilesHelper::getDisplayImageUrl('syndicate-others-advertisement', $raw['main_image'], $raw['publish_main_image'], $raw['publish_status']);
+        return FilesHelper::getDisplayImageUrl('others_advertisement', $raw['main_image'], $raw['publish_main_image'], $raw['publish_status'], 'publish_other_advertisement');
     }
 
     public function getPositionLabelAttribute()

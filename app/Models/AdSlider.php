@@ -37,4 +37,11 @@ class AdSlider extends Model
     {
         return $value ? FilesHelper::getImageFullUrl('ad-slider/' . $value) : null;
     }
+
+    public function getDisplayImageAttribute()
+    {
+        $raw = $this->getAttributes();
+
+        return FilesHelper::getDisplayImageUrl('ad-slider', $raw['main_image'], $raw['publish_main_image'] ?? null, $raw['publish_status'], 'publish_ad_slider');
+    }
 }

@@ -16,18 +16,20 @@ class RegistrationActivation extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public string $firstName, public string $activationUrl)
+    public function __construct(public string $firstName, public string $lastName, public string $activationUrl)
     {
         //
     }
 
     /**
-     * Get the message envelope.
+     * Get the message envelope. Matches old's real subject exactly - the
+     * old code's Mail::send() closure hardcodes "Syndicate" here, not the
+     * lang-key "Email Activation" value used only in the blade's <title>.
      */
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Syndicate TEAM - Registration',
+            subject: 'Syndicate',
         );
     }
 
@@ -40,6 +42,7 @@ class RegistrationActivation extends Mailable
             view: 'emails.registration-activation',
             with: [
                 'firstName' => $this->firstName,
+                'lastName' => $this->lastName,
                 'activationUrl' => $this->activationUrl,
             ],
         );

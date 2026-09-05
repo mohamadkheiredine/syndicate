@@ -36,4 +36,11 @@ class SplashSlider extends Model
     {
         return $value ? FilesHelper::getImageFullUrl('splash-slider/' . $value) : null;
     }
+
+    public function getDisplayImageAttribute()
+    {
+        $raw = $this->getAttributes();
+
+        return FilesHelper::getDisplayImageUrl('splash-slider', $raw['main_image'], $raw['publish_main_image'] ?? null, $raw['publish_status'], 'publish_splash_slider');
+    }
 }
