@@ -16,6 +16,8 @@
             </div>
         </div>
         <div class="card-body">
+            @include('cms.components.alert', ['with' => 'status', 'bg' => 'success'])
+
             <form method="post" action="{{ route('admin.'.$page_info['link'].'.update', $row) }}" autocomplete="off">
                 @csrf
                 @method('put')

@@ -27,20 +27,24 @@
                                     <a class="btn btn-sm btn-icon-only text-light" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="fas fa-ellipsis-v"></i>
                                     </a>
+                                     
                                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                        @can('roles-edit')
-                                        <a class="dropdown-item" href="{{ route('admin.'.$page_info['link'].'.edit', $role) }}">Edit</a>
-                                        @endcan
-                                        @can('roles-delete')
-                                        <form action="{{ route('admin.'.$page_info['link'].'.destroy', $role) }}" method="post">
-                                            @csrf
-                                            @method('delete')
+                                       
+                                            @can('roles-edit')
+                                            <a class="dropdown-item" href="{{ route('admin.'.$page_info['link'].'.edit', $role) }}">Edit</a>
+                                            @endcan
+                                            @if($role->id > 6)
+                                                @can('roles-delete')
+                                                <form action="{{ route('admin.'.$page_info['link'].'.destroy', $role) }}" method="post">
+                                                    @csrf
+                                                    @method('delete')
 
-                                            <button type="button" class="dropdown-item" onclick="confirm('Are you sure you want to delete this admin?') ? this.parentElement.submit() : ''">
-                                                Delete
-                                            </button>
-                                        </form>
-                                        @endcan
+                                                    <button type="button" class="dropdown-item" onclick="confirm('Are you sure you want to delete this admin?') ? this.parentElement.submit() : ''">
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                                @endcan
+                                            @endif
                                     </div>
                                 </div>
                             </td>

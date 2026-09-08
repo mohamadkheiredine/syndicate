@@ -7,7 +7,6 @@ use App\Helpers\PaginationHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Document;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class DocumentController extends Controller
 {
@@ -111,7 +110,7 @@ class DocumentController extends Controller
         $file = $row->getAttributes()['file'];
         if ($request->hasFile('file')) {
             if ($file) {
-                Storage::disk('public')->delete('documents/' . $file);
+                FilesHelper::deleteFileByName('documents', $file);
             }
             $file = FilesHelper::storeFile('documents', $request->file('file'));
         }
@@ -133,7 +132,7 @@ class DocumentController extends Controller
         $row = Document::findOrFail($id);
 
         if ($row->getAttributes()['file']) {
-            Storage::disk('public')->delete('documents/' . $row->getAttributes()['file']);
+            FilesHelper::deleteFileByName('documents', $row->getAttributes()['file']);
         }
 
         $row->delete();

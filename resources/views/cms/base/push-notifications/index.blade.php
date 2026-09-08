@@ -71,12 +71,6 @@
                                 {{-- Message --}}
                                 @include('cms.components.inputs.textarea', ['label' => 'Message', 'asterix' => true, 'name' => 'message'])
 
-                                {{-- Badge (optional - defaults to Increase +1, same as old, when left unset) --}}
-                                @include('cms.components.inputs.select-single', ['label' => 'iOS Badge', 'name' => 'badge', 'placeholder' => 'Default (Increase by 1)', 'rows' => $badge_options, 'value_attribute' => 'id', 'attribute' => 'title'])
-
-                                {{-- Badge number - used by Manual (set to) and Auto (add, negative subtracts) --}}
-                                @include('cms.components.inputs.number', ['label' => 'iOS Badge Number', 'name' => 'badge_count', 'text' => 'Used with Manual (set the badge to this) and Auto (add this each send; negative subtracts). Ignored on Default.'])
-
                                 <div class="text-center">
                                     <button type="submit" class="btn btn-success mt-4">Send</button>
                                 </div>

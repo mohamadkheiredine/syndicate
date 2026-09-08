@@ -8,6 +8,7 @@ use App\Models\SyndicateAbout;
 use App\Models\SyndicateFamily;
 use App\Models\SyndicateJoin;
 use App\Models\SyndicateOthersAdvertisement;
+use App\Models\SyndicateTermsCondition;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -40,19 +41,38 @@ class AboutController extends Controller
     {
         $page_title = 'Members Previous Years';
 
-        // Matches the old site's previous-members.php exactly: plain
-        // main_image (no publish_main_image fallback), year must match
-        // exactly. The old query's "AND status" (no comparison) is a no-op
-        // against this column - confirmed against the live site, which
-        // shows members regardless of published state on this page - so no
-        // status filter is applied here either.
-        $members = SyndicateFamily::where('syndicate_year', $year)->get();
+        // Only published family members (status = '1'). Old's live site
+        // showed them regardless of published state here, but the CMS
+        // publish toggle is now honoured on the website too - turning a
+        // member off in the CMS hides them from this page.
+        $members = SyndicateFamily::where('syndicate_year', $year)
+            ->where('status', '1')
+            ->get();
 
         return view('web.pages.previous-members', array_merge([
             'prev_year' => $year,
             'members' => $members,
             'page_title' => $page_title,
         ], $this->sidebarData()));
+    }
+
+
+    public function terms()
+    {
+        $page_title = 'Terms and Conditions';
+
+        $labels = [1 => 'Terms', 2 => 'Rules', 3 => 'Education'];
+
+        $sections = SyndicateTermsCondition::whereIn('id', array_keys($labels))
+            ->where('publish_status', 1)
+            ->orderBy('id')
+            ->get()
+            ->map(fn ($row) => [
+                'label' => $labels[$row->id],
+                'description' => $row->description,
+            ]);
+
+        return view('web.pages.terms', compact('page_title', 'sections'));
     }
 
     /**
@@ -81,8 +101,6 @@ class AboutController extends Controller
             'syndicate_email' => $request->syndicate_email,
         ]);
 
-        // A missing/invalid mail configuration should never break the join
-        // itself - the signup above already succeeded regardless.
         try {
             Mail::to($request->syndicate_email)->send(new JoinConfirmation($request->syndicate_name));
         } catch (\Throwable $e) {

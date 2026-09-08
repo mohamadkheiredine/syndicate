@@ -113,6 +113,7 @@
             <hr class="my-3">
             @endcanany
 
+            @canany(['syndicate_users-view', 'members_payment-view', 'reports-view', 'documents-view', 'income-view', 'expenses-view', 'yearly_payment-view', 'election_fees-view'])
             <h6 class="navbar-heading text-muted">MANAGEMENT</h6>
             <ul class="navbar-nav mb-3">
                 @can('syndicate_users-view')
@@ -172,6 +173,7 @@
                 </li>
                 @endcan
             </ul>
+            @endcanany
 
             @can('syndicate_advertisement-view')
             <h6 class="navbar-heading text-muted">FORMS</h6>
@@ -184,6 +186,7 @@
             </ul>
             @endcan
 
+            @canany(['banners-view', 'news-view', 'syndicate_activities-view', 'syndicate_offers-view', 'syndicate_family-view', 'our_team-edit', 'about_syndicate-edit', 'terms_conditions-edit', 'syndicate_others_advertisement-view', 'home_sliders-view', 'achievements-view', 'splash_sliders-view', 'ad_sliders-view', 'syndicate_user_manager-view'])
             <h6 class="navbar-heading text-muted">MAINTENANCE</h6>
             <ul class="navbar-nav mb-3">
                 @can('banners-view')
@@ -262,6 +265,13 @@
                     </div>
                 </li>
                 @endcan
+                @can('syndicate_user_manager-view')
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::is('admin.syndicate-user-manager.*') ? 'active' : '' }}" href="{{ route('admin.syndicate-user-manager.index') }}">
+                        <i class="fas fa-users"></i>Syndicate User Manager
+                    </a>
+                </li>
+                @endcan
                 @can('syndicate_others_advertisement-view')
                 <li class="nav-item">
                     <a class="nav-link {{ Route::is('admin.syndicate-others-advertisement.*') ? 'active' : '' }}" href="{{ route('admin.syndicate-others-advertisement.index') }}">
@@ -298,6 +308,7 @@
                 </li>
                 @endcan
             </ul>
+            @endcanany
 
             @can('push_notifications-create')
             <h6 class="navbar-heading text-muted">NOTIFICATION</h6>

@@ -12,6 +12,7 @@ use App\Http\Controllers\Cms\Base\PermissionController;
 use App\Http\Controllers\Cms\Base\SimulationController;
 use App\Http\Controllers\Cms\UserController;
 use App\Http\Controllers\Cms\SyndicateUserController;
+use App\Http\Controllers\Cms\SyndicateUserManagerController;
 use App\Http\Controllers\Cms\MemberPaymentController;
 use App\Http\Controllers\Cms\SupportCategoryController;
 use App\Http\Controllers\Cms\SupportController;
@@ -179,6 +180,10 @@ Route::middleware(['auth:admin', 'set_admin_as_default_guard', 'admin_content'])
         Route::get('syndicate-users/export/excel', [SyndicateUserController::class, 'exportExcel'])->name('syndicate-users.export.excel');
         Route::get('syndicate-users/export/pdf', [SyndicateUserController::class, 'exportPdf'])->name('syndicate-users.export.pdf');
         Route::resource('syndicate-users', SyndicateUserController::class)->except(['show']);
+
+        // SYNDICATE USER MANAGER (standalone port of mobilesyndicate-master's section)
+        Route::post('syndicate-user-manager/activate', [SyndicateUserManagerController::class, 'activate'])->name('syndicate-user-manager.activate');
+        Route::resource('syndicate-user-manager', SyndicateUserManagerController::class)->except(['show']);
 
         // MEMBERS PAYMENT
         Route::get('members-payment/outstanding-years/{user_id}', [MemberPaymentController::class, 'outstandingYears'])->name('members-payment.outstanding-years');

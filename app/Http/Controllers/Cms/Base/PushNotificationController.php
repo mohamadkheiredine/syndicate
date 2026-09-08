@@ -43,17 +43,12 @@ class PushNotificationController extends Controller
 
         $users = SyndicateUser::orderBy('first_name')->get(['id', 'first_name', 'last_name', 'email']);
 
-        $badge_options = [
-            ['id' => 'manual', 'title' => 'Manual (set a fixed number)'],
-            ['id' => 'auto', 'title' => 'Auto (increase/decrease by this number each time)'],
-        ];
-
         // Same 3 choices old's admin push screen offers - these are
         // OneSignal's own built-in segments, not something computed from
         // our DB, so no query needed to build this list.
         $segment_options = ['All', 'Active Users', 'Inactive Users'];
 
-        return view('cms.base.' . $page_info['link'] . '.index', compact('page_info', 'users', 'badge_options', 'segment_options'));
+        return view('cms.base.' . $page_info['link'] . '.index', compact('page_info', 'users', 'segment_options'));
     }
 
 
@@ -114,27 +109,10 @@ class PushNotificationController extends Controller
             'users' => 'required|array',
             'title' => 'required',
             'message' => 'required',
-            'badge_count' => 'nullable|integer',
         ]);
 
         $info = [];
         $data = ['type' => 'bulk'];
-
-        // iOS home-screen badge. "manual" sets the badge to badge_count,
-        // "auto" adds badge_count to it (negative subtracts). Left unset
-        // it just increases by 1, same default old used. These are now
-        // actually forwarded to OneSignal (see OneSignalHelper::oneSignal).
-        $badgeCount = $request->filled('badge_count') ? (int) $request->badge_count : 1;
-        if ($request->badge == 'manual') {
-            $info['ios_badgeType'] = 'SetTo';
-            $info['ios_badgeCount'] = $badgeCount;
-        } elseif ($request->badge == 'auto') {
-            $info['ios_badgeType'] = 'Increase';
-            $info['ios_badgeCount'] = $badgeCount;
-        } else {
-            $info['ios_badgeType'] = 'Increase';
-            $info['ios_badgeCount'] = 1;
-        }
 
         if ($request->hasFile('image') && $request->file('image')->isValid()) {
             $filename = FilesHelper::storeFile($page_info['link'], $request->file('image'));

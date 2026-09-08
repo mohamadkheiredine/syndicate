@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Cms;
 
-use App\Helpers\SubscriptionsHelper;
 use App\Http\Controllers\Controller;
 use App\Models\MemberPayment;
 use App\Models\SyndicatePayment;
@@ -14,11 +13,6 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class MemberPaymentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     function __construct()
     {
         $this->middleware('permission:members_payment-view', ['only' => ['index']]);
@@ -29,18 +23,23 @@ class MemberPaymentController extends Controller
 
     public function page_info()
     {
-        $page_info = [
+        return [
             'title' => 'Members Payment',
             'link' => 'members-payment',
-            'table_name' => 'user_expences'
+            'table_name' => 'user_expences',
         ];
-        return $page_info;
     }
 
     /**
-     * Total amount a syndicate user still owes: unpaid years (at the configured rate) plus
-     * any partially-paid year's shortfall.
+     * Total amount a syndicate user still owes - ported from old's
+     * MembersController@index.
      *
+     * Old iterates $user->expences, a relation scoped `where('status', 1)`.
+     * `status` is enum('0','1'); comparing it to the integer 1 matches the
+     * enum INDEX (1 -> '0'), so it matches NO rows here - old's Total Due
+     * therefore always treats the member as having paid nothing. Kept
+     * exactly as old, including abs(rate - paid) rather than a floored
+     * shortfall.
      */
     private function calculateDueAmount($userId)
     {
@@ -52,41 +51,55 @@ class MemberPaymentController extends Controller
         $creationYear = (int) $user->created_at->format('Y');
         $currentYear = (int) date('Y');
 
-        $paidByYear = MemberPayment::where('user_id', $userId)
-            ->where('ue_year', '>=', $creationYear)
-            ->selectRaw('ue_year, SUM(amount) as total')
-            ->groupBy('ue_year')
-            ->pluck('total', 'ue_year');
+        $listYears = range($creationYear, $currentYear);
 
-        $rates = SyndicatePayment::whereBetween('payment_year', [$creationYear, $currentYear])
-            ->pluck('payment_amount', 'payment_year');
+        $totalPaidPerYear = [];
+        $paidYears = [];
+        $expences = MemberPayment::where('user_id', $userId)
+            ->where('status', 1)
+            ->orderBy('ue_year')
+            ->orderBy('created_at')
+            ->get();
 
-        $due = 0;
-        for ($year = $creationYear; $year <= $currentYear; $year++) {
-            $expected = $rates[$year] ?? 0;
-            $paid = $paidByYear[$year] ?? 0;
-            $due += max($expected - $paid, 0);
+        foreach ($expences as $expence) {
+            if ($expence->ue_year >= $creationYear) {
+                $paidYears[] = $expence->ue_year;
+                $totalPaidPerYear[$expence->ue_year] = ($totalPaidPerYear[$expence->ue_year] ?? 0) + $expence->amount;
+            }
+        }
+        $paidYears = array_unique($paidYears);
+
+        $rates = SyndicatePayment::pluck('payment_amount', 'payment_year');
+
+        $amountDue = 0;
+        foreach ($totalPaidPerYear as $year => $totalPaid) {
+            $amountDue += abs(($rates[$year] ?? 0) - $totalPaid);
+        }
+        foreach ($listYears as $year) {
+            if (!in_array($year, $paidYears) && isset($rates[$year])) {
+                $amountDue += $rates[$year];
+            }
         }
 
-        return $due;
+        return $amountDue;
     }
 
-    /**
-     * Query for the table/export: every payment matching the current user/year filters.
-     * Not executed here — index() paginates it (only ~50 rows ever hit the browser),
-     * exports call ->get() on it (the full matching set, for a real export file).
-     *
-     */
     private function filteredQuery(Request $request)
     {
         $query = MemberPayment::with('user');
 
-        if ($request->filled('user_id')) {
-            $query->where('user_id', $request->user_id);
-        }
-
         if ($request->filled('year')) {
-            $query->where('ue_year', $request->year);
+            // Old: when a year is picked, show each member's LATEST payment
+            // from that year onward - the member filter is ignored in this
+            // branch, exactly as old's MembersController@index.
+            $year = (int) $request->year;
+            $query->whereRaw(
+                'ue_year = (select max(ue_year) from user_expences as secondary '
+                . 'where secondary.user_id = user_expences.user_id and secondary.ue_year >= ?)',
+                [$year]
+            );
+        } elseif ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
         }
 
         return $query->orderBy('created_at', 'desc');
@@ -135,15 +148,32 @@ class MemberPaymentController extends Controller
     }
 
     /**
-     * Outstanding years (and their rate) for a syndicate user — powers the "Payment due"
-     * multi-select on the Add Payment form via AJAX.
+     * Years (and their rate) offered on the Add Payment form's "Payment
+     * due" multi-select - ported from old's MembersController@payments.
      *
+     * Old builds "paid years" from $user->expences (the `where('status', 1)`
+     * relation - 0 rows here), so it effectively lists EVERY rate-card year
+     * from the member's join year onward, including ones already paid.
      */
     public function outstandingYears($user_id)
     {
         $user = SyndicateUser::findOrFail($user_id);
 
-        return response()->json(SubscriptionsHelper::outstandingYearsFor($user));
+        $creationYear = (int) $user->created_at->format('Y');
+
+        $paidYears = MemberPayment::where('user_id', $user->id)
+            ->where('status', 1)
+            ->pluck('ue_year')
+            ->toArray();
+
+        $payments = SyndicatePayment::where('payment_year', '>=', $creationYear)
+            ->whereNotIn('payment_year', $paidYears)
+            ->pluck('payment_amount', 'payment_year')
+            ->toArray();
+
+        ksort($payments);
+
+        return response()->json($payments);
     }
 
     /**
@@ -156,18 +186,33 @@ class MemberPaymentController extends Controller
 
         $this->validate($request, [
             'user_id' => 'required|exists:syndicate_user,id',
-            'receipt' => 'required|string|unique:' . $page_info['table_name'] . ',receipt',
+            'receipt' => 'required|string',
             'years' => 'required|array|min:1',
         ]);
 
+        // Old: manual receipt-taken check, redirect back with this exact text.
+        if (MemberPayment::where('receipt', $request->receipt)->exists()) {
+            return redirect()->back()->withInput()->with('error', 'Receipt Number already taken!');
+        }
+
         $user = SyndicateUser::findOrFail($request->user_id);
 
-        $outstandingYears = array_keys(SubscriptionsHelper::outstandingYearsFor($user));
-        $joinYear = (int) $user->created_at->format('Y');
+        // Old: years from join year to the current year that have NO payment
+        // row at all. The join year is exempt from the blocking check.
+        $creationYear = (int) $user->created_at->format('Y');
+        $currentYear = (int) date('Y');
+
+        $yearsMustPay = [];
+        for ($year = $creationYear; $year <= $currentYear; $year++) {
+            if (!MemberPayment::where('ue_year', $year)->where('user_id', $user->id)->exists()) {
+                $yearsMustPay[] = $year;
+            }
+        }
+
         $max = max($request->years);
-        foreach ($outstandingYears as $year) {
-            if (!in_array($year, $request->years) && $year < $max && $year != $joinYear) {
-                return redirect()->back()->withInput()->with('error', 'You need to pay the past years first.');
+        foreach ($yearsMustPay as $year) {
+            if (!in_array($year, $request->years) && $year < $max && $year != $creationYear) {
+                return redirect()->back()->withInput()->with('error', 'You need to pay the past years!');
             }
         }
 
@@ -267,5 +312,4 @@ class MemberPaymentController extends Controller
 
         return $pdf->download('members-payment.pdf');
     }
-
 }

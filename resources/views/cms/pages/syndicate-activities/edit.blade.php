@@ -16,6 +16,8 @@
             </div>
         </div>
         <div class="card-body">
+            @include('cms.components.alert', ['with' => 'status', 'bg' => 'success'])
+
             <form id="activity-edit-form" method="post" action="{{ route('admin.'.$page_info['link'].'.update', $row) }}" enctype="multipart/form-data" autocomplete="off">
                 @csrf
                 @method('put')

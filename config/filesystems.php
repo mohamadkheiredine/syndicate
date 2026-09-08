@@ -55,6 +55,12 @@ return [
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
+            // SSL certificate verification is turned off for the AWS SDK's
+            // HTTPS calls so uploads work on machines whose PHP has no CA
+            // bundle configured (which otherwise fails with cURL error 60).
+            'http' => [
+                'verify' => false,
+            ],
         ],
 
     ],

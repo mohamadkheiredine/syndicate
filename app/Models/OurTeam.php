@@ -23,21 +23,17 @@ class OurTeam extends Model
         return $value ? FilesHelper::getImageFullUrl('our_team/' . $value) : null;
     }
 
+    // The new CMS edits a single image + description (no separate
+    // draft/published copies), so the website reads those directly.
+    // The old publish_main_image / publish_short_description columns are
+    // stale import data the new CMS never updates - ignored here.
     public function getDisplayImageAttribute()
     {
-        $raw = $this->getAttributes();
-
-        return FilesHelper::getDisplayImageUrl('our_team', $raw['main_image'], $raw['publish_main_image'], $raw['publish_status'], 'publish_our_team');
+        return $this->main_image;
     }
 
     public function getDisplayDescriptionAttribute()
     {
-        $raw = $this->getAttributes();
-
-        if($raw['publish_short_description'] && (int) $raw['publish_status'] === 1){
-            return $raw['publish_short_description'];
-        }
-
-        return $raw['short_description'];
+        return $this->getAttributes()['short_description'] ?? '';
     }
 }

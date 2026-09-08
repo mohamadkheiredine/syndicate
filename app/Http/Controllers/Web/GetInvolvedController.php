@@ -73,6 +73,12 @@ class GetInvolvedController extends Controller
     {
         $lang = $request->input('lang') === 'ar' ? 'ar' : 'en';
 
+        // Same rules the CMS "Syndicate User Manager" applies when an admin
+        // creates a user (SyndicateUserManagerController::store) - so a
+        // member registering here goes through the exact same gate.
+        // dob keeps |date because this controller parses it below for the
+        // age check; the facebook/linkedin sub-fields are form-specific
+        // (the CMS collects the same data through a single helper).
         $request->validate([
             'first_name' => 'required|string|max:255',
             'fathers_name' => 'required|string|max:255',
@@ -80,17 +86,17 @@ class GetInvolvedController extends Controller
             'mothers_name' => 'required|string|max:255',
             'dob' => 'required|date',
             'mobile_number' => 'required|string|max:255',
-            'home_number' => 'nullable|string|max:255',
+            'home_number' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:syndicate_user,email',
             'password' => 'required|min:6',
             'company' => 'required|in:Alfa,Touch',
             'blood_type' => 'required|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
-            'profile_link' => 'nullable|in:FB,LINKEDIN,BOTH',
+            'profile_link' => 'required|in:FB,LINKEDIN,BOTH',
             'facebook_fb' => 'required_if:profile_link,FB|nullable|string|max:255',
             'linkedin_li' => 'required_if:profile_link,LINKEDIN|nullable|string|max:255',
             'facebook_both' => 'required_if:profile_link,BOTH|nullable|string|max:255',
             'linkedin_both' => 'required_if:profile_link,BOTH|nullable|string|max:255',
-            'photo' => 'required|image|max:512',
+            'photo' => 'required|mimes:png,jpg,jpeg|max:2048',
             'any_file' => 'nullable|mimes:pdf,doc,docx|max:5120',
         ]);
 
@@ -121,7 +127,7 @@ class GetInvolvedController extends Controller
             'mothers_name' => $request->mothers_name,
             'dob' => $dob->format('Y-m-d'),
             'mobile_number' => $request->mobile_number,
-            'home_number' => $request->home_number ?? '',
+            'home_number' => $request->home_number,
             'email' => $request->email,
             'password' => $request->password,
             'company' => $request->company,

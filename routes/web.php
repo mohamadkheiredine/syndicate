@@ -43,11 +43,15 @@ Route::middleware(['web_content'])->group(function () {
     Route::get('/contact', [GetInvolvedController::class, 'contact'])->name('web.contact');
     Route::post('/contact', [GetInvolvedController::class, 'sendContact'])->name('web.contact.send');
 
+    // TERMS, RULES & EDUCATION
+    // Ports the old site's terms.php - the three rows of
+    // syndicate_terms_conditions rendered as a vertical tab widget.
+    Route::get('/terms', [AboutController::class, 'terms'])->name('web.terms');
+
     // PLACEHOLDER PAGES
     // Empty for now - linked from the homepage (nav, CTA boxes, article grid) so
     // route() resolves everywhere. Each one gets its own real controller/view
     // when that page is built.
-    Route::view('/terms', 'web.pages.terms')->name('web.terms');
     Route::get('/user-login', [AuthController::class, 'show'])->name('web.user-login');
     Route::post('/login', [AuthController::class, 'login'])->name('web.login');
     Route::get('/logout', [AuthController::class, 'logout'])->name('web.logout');

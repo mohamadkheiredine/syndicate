@@ -1,0 +1,33 @@
+@extends('cms.layouts.main')
+
+@section('content')
+@include('cms.layouts.headers.partials', ['title' => 'Create Syndicate User'])
+
+<div class="container-fluid mt--7">
+    <div class="card bg-secondary shadow">
+        <div class="card-header bg-white border-0">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="mb-0">{{ $page_info['title'] }}</h3>
+                </div>
+                <div class="col-auto text-right">
+                    <a href="{{ route('admin.'.$page_info['link'].'.index') }}" class="btn btn-sm btn-primary">Back to list</a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <form method="post" action="{{ route('admin.'.$page_info['link'].'.store') }}" enctype="multipart/form-data" autocomplete="off">
+                @csrf
+
+                @include('cms.pages.'.$page_info['link'].'.form')
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success mt-4">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @include('cms.layouts.footers.auth')
+</div>
+@endsection

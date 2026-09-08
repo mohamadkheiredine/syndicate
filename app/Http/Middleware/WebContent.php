@@ -23,8 +23,11 @@ class WebContent extends Controller
         $web_logo = SyndicateLogo::find(1);
         $web_settings = SyndicateSetting::find(1);
 
-        // Past syndicate years, for the "Members Previous Years" nav dropdown
+        // Past syndicate years, for the "Members Previous Years" nav dropdown.
+        // Published members only, so a year with nothing published no longer
+        // shows an empty page from the menu.
         $web_family_years = SyndicateFamily::where('syndicate_year', '<', date('Y'))
+            ->where('status', '1')
             ->groupBy('syndicate_year')
             ->pluck('syndicate_year');
 

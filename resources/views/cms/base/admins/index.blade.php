@@ -76,35 +76,39 @@
                                             </a>
                                             <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
                                                 @can('admins-edit')
-                                                    {{-- Admin can not edit himself redirect to profile page --}}
-                                                    @if (Auth::guard('admin')->user()->id != $row->id)
-                                                        {{-- All other Roles can not edit: developer or super-admin --}}
-                                                        @if (!$row->hasRole('developer') && !$row->hasRole('super-admin'))
+                                                    @if($row->id != 1)
+                                                        {{-- Admin can not edit himself redirect to profile page --}}
+                                                        @if (Auth::guard('admin')->user()->id != $row->id)
+                                                            {{-- All other Roles can not edit: developer or super-admin --}}
+                                                            @if (!$row->hasRole('developer') && !$row->hasRole('super-admin'))
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('admin.' . $page_info['link'] . '.edit', $row) }}">Edit</a>
+                                                            @endif
+                                                        @else
                                                             <a class="dropdown-item"
-                                                                href="{{ route('admin.' . $page_info['link'] . '.edit', $row) }}">Edit</a>
+                                                                href="{{ route('admin.profile.edit') }}">Edit</a>
                                                         @endif
-                                                    @else
-                                                        <a class="dropdown-item"
-                                                            href="{{ route('admin.profile.edit') }}">Edit</a>
                                                     @endif
                                                 @endcan
 
                                                 @can('admins-delete')
-                                                    {{-- Admin can not delete himself --}}
-                                                    @if (Auth::guard('admin')->user()->id != $row->id)
-                                                        {{-- All other Roles can not delete: developer or super-admin --}}
-                                                        @if (!$row->hasRole('developer') && !$row->hasRole('super-admin'))
-                                                            <form
-                                                                action="{{ route('admin.' . $page_info['link'] . '.destroy', $row) }}"
-                                                                method="post">
-                                                                @csrf
-                                                                @method('delete')
+                                                    @if($row->id != 1)
+                                                        {{-- Admin can not delete himself --}}
+                                                        @if (Auth::guard('admin')->user()->id != $row->id)
+                                                            {{-- All other Roles can not delete: developer or super-admin --}}
+                                                            @if (!$row->hasRole('developer') && !$row->hasRole('super-admin'))
+                                                                <form
+                                                                    action="{{ route('admin.' . $page_info['link'] . '.destroy', $row) }}"
+                                                                    method="post">
+                                                                    @csrf
+                                                                    @method('delete')
 
-                                                                <button type="button" class="dropdown-item"
-                                                                    onclick="confirm('Are you sure you want to delete this admin?') ? this.parentElement.submit() : ''">
-                                                                    Delete
-                                                                </button>
-                                                            </form>
+                                                                    <button type="button" class="dropdown-item"
+                                                                        onclick="confirm('Are you sure you want to delete this admin?') ? this.parentElement.submit() : ''">
+                                                                        Delete
+                                                                    </button>
+                                                                </form>
+                                                            @endif
                                                         @endif
                                                     @endif
                                                 @endcan

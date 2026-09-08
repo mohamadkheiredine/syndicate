@@ -13,31 +13,33 @@ class FilesHelper
      * Store file
      *
      */
-    static function storeFile($folder, $request_file, $title = null, $random = null)
+   static function storeFile($folder, $request_file, $title = null, $random = null)
     {
-        $tmp_file = $request_file;
+        $tmp_file_extension = $request_file->getClientOriginalExtension();
 
-        if(isset($title) && $title)
-            $tmp_file_name = strtolower(str_replace(" ", "-", $title));
-        else
-            $tmp_file_name = basename($tmp_file->getClientOriginalName(), '.'.$tmp_file->getClientOriginalExtension());
-
-        $tmp_file_extension = $tmp_file->getClientOriginalExtension();
-
-        if($random){
-            $tmp_file_name = preg_replace('/[^A-Za-z0-9\-]/', '', $tmp_file_name);
-            $original_name = $tmp_file_name . "-" . rand(0000, 9999) . "." . $tmp_file_extension;
-        } else {
-            $original_name = $tmp_file_name . "." . $tmp_file_extension;
-        }
-
-        // Random title path
+        // File is always stored under a random, collision-proof name
         $original_name = Carbon::now()->timestamp . "-" . rand() . "." . $tmp_file_extension;
 
-        if(Config::get('services.s3bucket.status')){
-            Storage::disk('s3')->put(config('filesystems.disks.s3.bucket_name').'/'.$folder.'/'.$original_name, file_get_contents($request_file));
+        if (Config::get('services.s3bucket.status')) {
+            $key = config('filesystems.disks.s3.bucket_name') . '/' . $folder . '/' . $original_name;
+
+            try {
+                $uploaded = Storage::disk('s3')->put($key, file_get_contents($request_file->getRealPath()));
+            } catch (\Throwable $e) {
+                // Surface the real underlying reason instead of guessing
+                throw new \RuntimeException(
+                    "S3 upload failed for '{$key}' on bucket '".config('filesystems.disks.s3.bucket')."': ".$e->getMessage()
+                );
+            }
+
+            if ($uploaded === false) {
+                throw new \RuntimeException(
+                    "S3 upload failed for '{$key}' on bucket '".config('filesystems.disks.s3.bucket')."'. "
+                    ."Likely a PHP SSL/CA-bundle issue (cURL error 60) or invalid AWS credentials / missing s3:PutObject."
+                );
+            }
         } else {
-            $tmp_file->storeAs('public/'.$folder, $original_name);
+            $request_file->storeAs('public/'.$folder, $original_name);
         }
 
         return $original_name;
@@ -73,19 +75,7 @@ class FilesHelper
         }
     }
 
-    /**
-     * Resolve which image to show for rows that carry both a live image and a
-     * pending (publish_*) one awaiting approval - same rule the old site used
-     * everywhere: show the pending image only once it's been approved.
-     *
-     * The old site stored the published copy in a genuinely different S3
-     * folder from the pending one (not just a different filename in the
-     * same folder), and the naming isn't a predictable "publish_" + folder
-     * rule - each one is its own real folder name. $publishFolder lets a
-     * caller pass that real name; defaults to $folder for any caller that
-     * hasn't been given one yet.
-     *
-     */
+
     static function getDisplayImageUrl($folder, $mainImage, $publishImage = null, $publishStatus = null, $publishFolder = null)
     {
         if($publishImage && (int) $publishStatus === 1){

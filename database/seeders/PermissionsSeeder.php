@@ -170,6 +170,13 @@ class PermissionsSeeder extends Seeder
             array('name' => 'syndicate_users-reset_password', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
             array('name' => 'syndicate_users-export', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
 
+            // Syndicate User Manager (standalone section)
+            array('name' => 'syndicate_user_manager-view', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'syndicate_user_manager-create', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'syndicate_user_manager-edit', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'syndicate_user_manager-delete', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+            array('name' => 'syndicate_user_manager-activate', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
+
             // Members Payment
             array('name' => 'members_payment-view', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),
             array('name' => 'members_payment-create', 'guard_name' => 'admin', 'created_at' => now(), 'updated_at' => now()),

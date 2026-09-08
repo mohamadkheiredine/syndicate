@@ -81,16 +81,10 @@ class OneSignalHelper
         if(isset($info['big_picture'])){
             $fields['big_picture'] = $info['big_picture'];
         }
-        // iOS home-screen badge count. Old set these into $info but never
-        // forwarded them to OneSignal, so the badge dropdown did nothing.
-        // Now sent through: ios_badgeType is None/SetTo/Increase,
-        // ios_badgeCount is the number to set / add (negative subtracts).
-        if(isset($info['ios_badgeType'])){
-            $fields['ios_badgeType'] = $info['ios_badgeType'];
-            $fields['ios_badgeCount'] = (int) ($info['ios_badgeCount'] ?? 0);
-        }
-        // ios_attachments is still not forwarded - old never sent it and
-        // the CMS form has no field for it.
+        // ios_attachments / ios_badgeType / ios_badgeCount are deliberately
+        // NOT forwarded - the real live old CMS (mobilesyndicate.net) has no
+        // iOS badge at all, and syndicate-website-master's own oneSignal()
+        // never sent these either.
         $fields = json_encode($fields);
         try{
             $ch = curl_init();
