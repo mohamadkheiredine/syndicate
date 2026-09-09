@@ -40,10 +40,7 @@
 @endsection
 
 @push('scripts')
+{{-- Load the tab widget plugin on this page; main.js initialises every
+     .tabs-vert / .tabs-hor once it is present. --}}
 <script src="{{ asset('assets-web/libraries/easy-responsive-tabs/easyresponsivetabs.js') }}"></script>
-<script>
-    jQuery(function ($) {
-        $('#demo-tabs-vert').easyResponsiveTabs({ type: 'vertical', width: 'auto', fit: true, closed: false });
-    });
-</script>
 @endpush
